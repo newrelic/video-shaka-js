@@ -1,0 +1,15 @@
+{
+    "extends": "standard",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "standard"
+    ],
+    "globals": {
+        "newrelic": true,
+        "nrvideo": true,
+        "shaka": true
+    }
+}
