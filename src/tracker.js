@@ -1,10 +1,10 @@
 import * as nrvideo from 'newrelic-video-core'
 import {version} from '../package.json'
 
-export default class ShakaTracker extends nrvideo.Tracker {
+export default class ShakaTracker extends nrvideo.VideoTracker {
   setPlayer (player, tag) {
     if (!tag && player.getMediaElement) tag = player.getMediaElement()
-    nrvideo.Tracker.prototype.setPlayer.call(this, player, tag)
+    nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag)
   }
 
   getTrackerName () {
