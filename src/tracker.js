@@ -20,7 +20,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   getSrc () {
-    return this.player.getManifestUri()
+    return this.player.getAssetUri()
   }
 
   getPlayrate () {
