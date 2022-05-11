@@ -68,22 +68,23 @@ export default class ShakaAdsTracker extends nrvideo.VideoTracker {
   }
 
   onTime(event) {
-    this.playhead = event.originalEvent.h.currentTime;
-    this.duration = event.originalEvent.h.duration;
+    const adData = event.originalEvent.getAdData();
+    this.playhead = adData.currentTime;
+    this.duration = adData.duration;
   }
 
   onStarted(event) {
-    this._creativeId = event.sdkAdObject.h.creativeId;
-    this.resource = event.sdkAdObject.h.clickThroughUrl;
-    this.title = event.sdkAdObject.h.title;
+    this._creativeId = event.sdkAdObject.getCreativeId();
+    this.resource = this._getClickThroughUrl(event.sdkAdObject);
+    this.title = event.sdkAdObject.getTitle()
 
     this.sendRequest();
     this.sendStart();
   }
 
   onImpression(event) {
-    this.resource = event.sdkAdObject.h.clickThroughUrl;
-    this.title = event.sdkAdObject.h.title;
+    this.resource = this._getClickThroughUrl(event.sdkAdObject);
+    this.title = event.sdkAdObject.getTitle();
   }
 
   onPause(_event) {
@@ -119,5 +120,9 @@ export default class ShakaAdsTracker extends nrvideo.VideoTracker {
     this.resource = undefined;
     this.title = undefined;
     this._creativeId = undefined;
+  }
+  
+  _getClickThroughUrl(googleImaAd) {
+    return Object.values(googleImaAd)[0].clickThroughUrl
   }
 }
