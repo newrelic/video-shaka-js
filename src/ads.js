@@ -76,7 +76,7 @@ export default class ShakaAdsTracker extends nrvideo.VideoTracker {
   onStarted(event) {
     this._creativeId = event.sdkAdObject.getCreativeId();
     this.resource = this._getClickThroughUrl(event.sdkAdObject);
-    this.title = event.sdkAdObject.getTitle()
+    this.title = event.sdkAdObject.getTitle();
 
     this.sendRequest();
     this.sendStart();
@@ -123,6 +123,6 @@ export default class ShakaAdsTracker extends nrvideo.VideoTracker {
   }
   
   _getClickThroughUrl(googleImaAd) {
-    return Object.values(googleImaAd)[0].clickThroughUrl
+    return Object.values(googleImaAd)[0].clickThroughUrl;
   }
 }
