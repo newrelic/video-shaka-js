@@ -42,29 +42,38 @@ export default class ShakaAdsTracker extends nrvideo.VideoTracker {
       "ad-skipped",
       "ad-clicked",
     ]);
-
+    
+    this.onStartedListener = this.onStarted.bind(this);
+    this.onCompleteListener = this.onComplete.bind(this);
+    this.onTimeListener = this.onTime.bind(this);
+    this.onImpressionListener = this.onImpression.bind(this);
+    this.onPlayListener = this.onPlay.bind(this);
+    this.onPauseListener = this.onPause.bind(this);
+    this.onSkippedListener = this.onSkipped.bind(this);
+    this.onClickListener = this.onClick.bind(this);
+    
     const adManager = this.player.getAdManager();
-    adManager.addEventListener("ad-started", this.onStarted.bind(this));
-    adManager.addEventListener("ad-complete", this.onComplete.bind(this));
-    adManager.addEventListener("ad-progress", this.onTime.bind(this));
-    adManager.addEventListener("ad-impression", this.onImpression.bind(this));
-    adManager.addEventListener("ad-resumed", this.onPlay.bind(this));
-    adManager.addEventListener("ad-paused", this.onPause.bind(this));
-    adManager.addEventListener("ad-skipped", this.onSkipped.bind(this));
-    adManager.addEventListener("ad-clicked", this.onClick.bind(this));
+    adManager.addEventListener("ad-started", this.onStartedListener);
+    adManager.addEventListener("ad-complete", this.onCompleteListener);
+    adManager.addEventListener("ad-progress", this.onTimeListener);
+    adManager.addEventListener("ad-impression", this.onImpressionListener);
+    adManager.addEventListener("ad-resumed", this.onPlayListener);
+    adManager.addEventListener("ad-paused", this.onPauseListener);
+    adManager.addEventListener("ad-skipped", this.onSkippedListener);
+    adManager.addEventListener("ad-clicked", this.onClickListener);
   }
 
   unregisterListeners() {
     const adManager = this.player.getAdManager();
 
-    adManager.removeEventListener("ad-started", this.onStarted);
-    adManager.removeEventListener("ad-complete", this.onComplete);
-    adManager.removeEventListener("ad-progress", this.onTime);
-    adManager.removeEventListener("ad-impression", this.onImpression);
-    adManager.removeEventListener("ad-resumed", this.onPlay);
-    adManager.removeEventListener("ad-paused", this.onPause);
-    adManager.removeEventListener("ad-skipped", this.onSkipped);
-    adManager.removeEventListener("ad-clicked", this.onClick);
+    adManager.removeEventListener("ad-started", this.onStartedListener);
+    adManager.removeEventListener("ad-complete", this.onCompleteListener);
+    adManager.removeEventListener("ad-progress", this.onTimeListener);
+    adManager.removeEventListener("ad-impression", this.onImpressionListener);
+    adManager.removeEventListener("ad-resumed", this.onPlayListener);
+    adManager.removeEventListener("ad-paused", this.onPauseListener);
+    adManager.removeEventListener("ad-skipped", this.onSkippedListener);
+    adManager.removeEventListener("ad-clicked", this.onClickListener);
   }
 
   onTime(event) {
