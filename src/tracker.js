@@ -88,7 +88,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     this.tag.addEventListener('play', this.onPlayListener)
     this.tag.addEventListener('playing', this.onPlayingListener)
     this.tag.addEventListener('pause', this.onPauseListener)
-    this.tag.addEventListener('seeking', this.onSeekedListener)
+    this.tag.addEventListener('seeking', this.onSeekingListener)
     this.tag.addEventListener('seeked', this.onSeekedListener)
     this.tag.addEventListener('error', this.onErrorListener)
     this.tag.addEventListener('ended', this.onEndedListener)
