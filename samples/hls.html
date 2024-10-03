@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shaka HLS Play</title>
   <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
   <script type="text/javascript" src="agent.js"></script>
 
@@ -8,12 +11,14 @@
   <script src="../dist/newrelic-video-shaka.min.js"></script>
     
   <!-- shaka -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/2.2.1/shaka-player.compiled.debug.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
+
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/2.2.1/shaka-player.compiled.debug.js"></script> -->
 </head>
 <body>
     <video id="myPlayer" width="640" height="480" crossorigin="anonymous" controls></video>
   <script>
-    function initPlayer() {
+    async function initPlayer() {
       // Install polyfills.
       shaka.polyfill.installAll()
 
@@ -24,18 +29,18 @@
       var player = new shaka.Player(video)
 
       // Attach the player to the window so that it can be easily debugged.
-      window.player = player
+      // window.player = player
 
-      // source
-      var source = 'https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/master.m3u8'
+      // // source
+      var source = 'http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8'
 
-      // newrelic
-      nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player))
-
-      // Load the source into the Player.
-      player.load(source).catch(function(error) {
-        nrvideo.Core.sendError(error)
-      })
+      try {
+            window.player = player;
+            await player.load(source);
+            nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          } catch (e) {
+            console.error("Error code", "object", e);
+          }
     }
     
     document.addEventListener('DOMContentLoaded', initPlayer)

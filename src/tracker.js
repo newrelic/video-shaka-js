@@ -1,147 +1,165 @@
-import * as nrvideo from 'newrelic-video-core'
-import {version} from '../package.json'
+import * as nrvideo from "newrelic-video-core";
+import { version } from "../package.json";
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
-  setPlayer (player, tag) {
-    if (!tag && player.getMediaElement) tag = player.getMediaElement()
-    nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag)
+  constructor(player, tag) {
+    super(player, tag);
+  }
+  setPlayer(player, tag) {
+    if (!tag && player.getMediaElement) tag = player.getMediaElement();
+    nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag);
   }
 
-  getTrackerName () {
-    return 'shaka'
+  getTrackerName() {
+    return "shaka";
   }
 
-  getTrackerVersion () {
-    return version
+  getTrackerVersion() {
+    return version;
   }
 
-  isLive () {
-    return this.player.isLive()
+  isLive() {
+    return this.player.isLive();
   }
 
-  getSrc () {
-    return this.player.getManifestUri()
+  getSrc() {
+    return this.player.getAssetUri();
   }
 
-  getPlayrate () {
-    return this.player.getPlaybackRate()
+  getPlayrate() {
+    return this.player.getPlaybackRate();
   }
 
-  getTrack () {
-    var tracks = this.player.getVariantTracks()
+  getTrack() {
+    var tracks = this.player.getVariantTracks();
     for (var i in tracks) {
-      var track = tracks[i]
-      if (track.active && (track.type === 'video' || track.type === 'variant')) {
-        return track
+      var track = tracks[i];
+      if (
+        track.active &&
+        (track.type === "video" || track.type === "variant")
+      ) {
+        return track;
       }
     }
-    return {}
+    return {};
   }
 
-  getLanguage () {
-    return this.getTrack().language
+  getLanguage() {
+    return this.getTrack().language;
   }
 
-  getRenditionName () {
-    return this.getTrack().label
+  getRenditionName() {
+    return this.getTrack().label;
   }
 
-  getRenditionBitrate () {
-    return this.getTrack().bandwidth
+  getRenditionBitrate() {
+    return this.getTrack().bandwidth;
   }
 
-  getRenditionWidth () {
-    return this.getTrack().width
+  getRenditionWidth() {
+    return this.getTrack().width;
   }
 
-  getRenditionHeight () {
-    return this.getTrack().height
+  getRenditionHeight() {
+    return this.getTrack().height;
   }
 
-  getPlayerVersion () {
-    return shaka.Player.version
+  getPlayerVersion() {
+    return shaka.Player.version;
   }
 
-  registerListeners () {
-    nrvideo.Log.debugCommonVideoEvents(this.tag)
+  registerListeners() {
+
+    nrvideo.Log.debugCommonVideoEvents(this.tag);
     nrvideo.Log.debugCommonVideoEvents(this.player, [
-      null, 'buffering', 'loading', 'adaptation', 'emsg', 'trackschanged', 'unloading',
-      'expirationupdated', 'largegap', 'texttrackvisibility', 'trackschanged'
-    ])
+      null,
+      "buffering",
+      "loading",
+      "adaptation",
+      "emsg",
+      "trackschanged",
+      "unloading",
+      "expirationupdated",
+      "largegap",
+      "texttrackvisibility",
+      "trackschanged",
+    ]);
 
-    this.tag.addEventListener('loadstart', this.onDownload.bind(this))
-    this.tag.addEventListener('loadedmetadata', this.onDownload.bind(this))
-    this.tag.addEventListener('loadeddata', this.onDownload.bind(this))
-    this.tag.addEventListener('play', this.onPlay.bind(this))
-    this.tag.addEventListener('playing', this.onPlaying.bind(this))
-    this.tag.addEventListener('pause', this.onPause.bind(this))
-    this.tag.addEventListener('seeking', this.onSeeking.bind(this))
-    this.tag.addEventListener('seeked', this.onSeeked.bind(this))
-    this.tag.addEventListener('error', this.onError.bind(this))
-    this.tag.addEventListener('ended', this.onEnded.bind(this))
+    this.tag.addEventListener("pause", this.onPause.bind(this));
+    this.tag.addEventListener("ended", this.onEnded.bind(this));
+    this.tag.addEventListener("play", this.onPlay.bind(this));
+    this.tag.addEventListener("loadedmetadata", this.onDownload.bind(this));
+    this.tag.addEventListener("loadeddata", this.onDownload.bind(this));
+    this.tag.addEventListener("loadstart", this.onDownload.bind(this));
+    this.tag.addEventListener("playing", this.onPlaying.bind(this));
+    this.tag.addEventListener("seeking", this.onSeeking.bind(this));
+    this.tag.addEventListener("seeked", this.onSeeked.bind(this));
+    this.tag.addEventListener("error", this.onError.bind(this));
 
-    this.player.addEventListener('buffering', this.onBuffering.bind(this))
-    this.player.addEventListener('adaptation', this.onAdaptation.bind(this))
+    this.player.addEventListener("buffering", this.onBuffering.bind(this));
+    this.player.addEventListener("adaptation", this.onAdaptation.bind(this));
+    // this.player.addEventListener("adsready", this.onAdsready.bind(this));
   }
 
-  unregisterListeners () {
-    this.tag.removeEventListener('loadstart', this.onDownload)
-    this.tag.removeEventListener('loadedmetadata', this.onDownload)
-    this.tag.removeEventListener('loadeddata', this.onDownload)
-    this.tag.removeEventListener('play', this.onPlay)
-    this.tag.removeEventListener('playing', this.onPlaying)
-    this.tag.removeEventListener('pause', this.onPause)
-    this.tag.removeEventListener('seeking', this.onSeeking)
-    this.tag.removeEventListener('seeked', this.onSeeked)
-    this.tag.removeEventListener('error', this.onError)
-    this.tag.removeEventListener('ended', this.onEnded)
+  unregisterListeners() {
+    this.tag.removeEventListener("loadeddata", this.onDownload);
+    this.tag.removeEventListener("play", this.onPlay);
+    this.tag.removeEventListener("playing", this.onPlaying);
+    this.tag.removeEventListener("pause", this.onPause);
+    this.tag.removeEventListener("seeking", this.onSeeking);
+    this.tag.removeEventListener("seeked", this.onSeeked);
+    this.tag.removeEventListener("error", this.onError);
+    this.tag.removeEventListener("ended", this.onEnded);
 
-    this.player.removeEventListener('buffering', this.onBuffering)
-    this.player.removeEventListener('adaptation', this.onAdaptation)
+    this.player.removeEventListener("loadstart", this.onDownload);
+    this.player.removeEventListener("loadedmetadata", this.onDownload);
+    // this.player.removeEventListener("adsready", this.onAdsready);
   }
 
-  onDownload (e) {
-    this.sendDownload({ state: e.type })
+  onDownload(e) {
+    this.sendDownload({ state: e.type });
   }
 
-  onPlay () {
-    this.sendRequest()
+  onPlay() {
+    this.sendRequest();
   }
 
-  onPlaying () {
-    this.sendResume()
-    this.sendStart()
+  onPlaying() {
+    this.sendResume();
+    this.sendStart();
   }
 
-  onAdaptation (e) {
-    this.sendRenditionChanged()
+  onAdaptation(e) {
+    this.sendRenditionChanged();
   }
 
-  onBuffering (e) {
+  onBuffering(e) {
     if (e.buffering) {
-      this.sendBufferStart()
+      this.sendBufferStart();
     } else {
-      this.sendBufferEnd()
+      this.sendBufferEnd();
     }
   }
 
-  onPause () {
-    this.sendPause()
+  onPause() {
+    this.sendPause();
   }
 
-  onSeeking () {
-    this.sendSeekStart()
+  onSeeking() {
+    this.sendSeekStart();
   }
 
-  onSeeked () {
-    this.sendSeekEnd()
+  onSeeked() {
+    this.sendSeekEnd();
   }
 
-  onError (e) {
-    this.sendError(e.detail)
+  onError(e) {
+    this.sendError(e.detail);
   }
 
-  onEnded () {
-    this.sendEnd()
+  onEnded() {
+    this.sendEnd();
   }
+
+  
 }

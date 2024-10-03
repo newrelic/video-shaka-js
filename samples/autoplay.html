@@ -1,41 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shaka Player MSS Example</title>
   <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
   <script type="text/javascript" src="agent.js"></script>
-
   <!-- newrelic tracker -->
   <script src="../dist/newrelic-video-shaka.min.js"></script>
-    
   <!-- shaka -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/2.2.1/shaka-player.compiled.debug.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.js"></script>
+  
+  <script defer src="../node_modules/codem-isoboxer/dist/iso_boxer.min.js"></script>
 </head>
 <body>
-    <video id="myPlayer" width="640" height="480" crossorigin="anonymous" controls autoplay></video>
+  <video id="video" width="640" controls></video>
   <script>
-    function initPlayer() {
+    async function initPlayer() {
       // Install polyfills.
       shaka.polyfill.installAll()
 
       // Find the video element.
-      var video = document.getElementById('myPlayer')
+      var video = document.getElementById('video')
 
       // Construct a Player to wrap around it.
-      var player = new shaka.Player(video)
-
-      // Attach the player to the window so that it can be easily debugged.
-      window.player = player
+      var player = new shaka.Player(video);
 
       // source
-      var source = 'https://storage.googleapis.com/shaka-demo-assets/angel-one-hls/master.m3u8'
+      var source = 'https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest';
 
-      // newrelic
-      nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player))
-
-      // Load the source into the Player.
-      player.load(source).catch(function(error) {
-        nrvideo.Core.sendError(error)
-      })
+      try {
+            await player.load(source);
+            nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          } catch (e) {
+            console.error("Error code", "object", e);
+          }
     }
     
     document.addEventListener('DOMContentLoaded', initPlayer)
