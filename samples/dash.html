@@ -32,9 +32,10 @@
       try {
             window.player = player;
             await player.load(source);
+            // newrelic
             nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
-          } catch (e) {
-            console.error("Error code", "object", e);
+          } catch (error) {
+            nrvideo.Core.sendError(error)
           }
     }
 

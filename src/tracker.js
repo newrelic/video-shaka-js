@@ -2,9 +2,6 @@ import * as nrvideo from "newrelic-video-core";
 import { version } from "../package.json";
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
-  constructor(player, tag) {
-    super(player, tag);
-  }
   setPlayer(player, tag) {
     if (!tag && player.getMediaElement) tag = player.getMediaElement();
     nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag);
@@ -98,7 +95,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
 
     this.player.addEventListener("buffering", this.onBuffering.bind(this));
     this.player.addEventListener("adaptation", this.onAdaptation.bind(this));
-    // this.player.addEventListener("adsready", this.onAdsready.bind(this));
   }
 
   unregisterListeners() {
@@ -113,7 +109,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
 
     this.player.removeEventListener("loadstart", this.onDownload);
     this.player.removeEventListener("loadedmetadata", this.onDownload);
-    // this.player.removeEventListener("adsready", this.onAdsready);
   }
 
   onDownload(e) {
@@ -160,6 +155,4 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   onEnded() {
     this.sendEnd();
   }
-
-  
 }
