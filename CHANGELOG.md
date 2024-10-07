@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## Unreleased
+## [0.3.0] - 2024/10/07
+### Update
+- Upgraded Shaka Player version `4.11.2`.
 
 ## [0.2.0] - 2017/11/28
 ### Lib
