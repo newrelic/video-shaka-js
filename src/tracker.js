@@ -1,5 +1,6 @@
 import * as nrvideo from "newrelic-video-core";
 import { version } from "../package.json";
+import ShakaToNewRelicMapper from "./utils/mapper";
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
   setPlayer(player, tag) {
@@ -103,9 +104,9 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     this.tag.addEventListener("pause", this.onPauseListener);
     this.tag.addEventListener("seeking", this.onSeekingListener);
     this.tag.addEventListener("seeked", this.onSeekedListener);
-    this.tag.addEventListener("error", this.onErrorListener);
     this.tag.addEventListener("ended", this.onEndedListener);
 
+    this.player.addEventListener("error", this.onErrorListener);
     this.player.addEventListener("buffering", this.onBufferingListener);
     this.player.addEventListener("adaptation", this.onAdaptationListener);
   }
@@ -119,9 +120,9 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     this.tag.removeEventListener("pause", this.onPauseListener);
     this.tag.removeEventListener("seeking", this.onSeekingListener);
     this.tag.removeEventListener("seeked", this.onSeekedListener);
-    this.tag.removeEventListener("error", this.onErrorListener);
     this.tag.removeEventListener("ended", this.onEndedListener);
 
+    this.player.removeEventListener("error", this.onErrorListener);
     this.player.removeEventListener("buffering", this.onBufferingListener);
     this.player.removeEventListener("adaptation", this.onAdaptationListener);
   }
@@ -164,7 +165,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onError(e) {
-    this.sendError(e.detail);
+    this.sendError(ShakaToNewRelicMapper.mapErrorAttributes(e.detail));
   }
 
   onEnded() {

@@ -5,10 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "webpack -p",
+    "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "watch": "webpack -p --progress --color --watch",
-    "watch:dev": "webpack --progress --color --watch",
+    "watch": "webpack --mode production --progress --color --watch",
+    "watch:dev": "webpack --mode development --progress --color --watch",
     "prezip": "npm run build",
     "zip": "zip -P newrelic -x '*.DS_Store' -r shaka.zip dist samples README.md CHANGELOG.md EULA.md",
     "clean": "rm -rf dist *.zip",
