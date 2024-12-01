@@ -45,12 +45,20 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.getTrack().language;
   }
 
+  getPlayerName() {
+    return "Shaka";
+  }
+
+  getBitrate() {
+    return this.player.getStats().streamBandwidth;
+  }
+
   getRenditionName() {
     return this.getTrack().label;
   }
 
   getRenditionBitrate() {
-    return this.getTrack().bandwidth;
+    return this.getTrack().videoBandwidth;
   }
 
   getRenditionWidth() {
@@ -66,7 +74,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   registerListeners() {
-
     nrvideo.Log.debugCommonVideoEvents(this.tag);
     nrvideo.Log.debugCommonVideoEvents(this.player, [
       null,

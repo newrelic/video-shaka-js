@@ -75,7 +75,7 @@ describe("getTrack", () => {
     player.getVariantTracks.mockReturnValue(mockTracks);
 
     const track = shakaTracker.getTrack();
-    console.log(track);
+
     expect(track.type).toEqual(mockTracks[1].type);
     expect(track.active).toEqual(mockTracks[1].active);
   });
@@ -90,6 +90,19 @@ describe("getTrack", () => {
 
     const track = shakaTracker.getTrack();
     expect(track).toEqual({});
+  });
+});
+
+describe("getPlayerName", () => {
+  let shakaTracker;
+
+  beforeEach(() => {
+    shakaTracker = new ShakaTracker(player, {});
+  });
+
+  it("should return the player name", () => {
+    const playerName = shakaTracker.getPlayerName();
+    expect(playerName).toBe("Shaka");
   });
 });
 
@@ -234,14 +247,32 @@ describe("getRenditionBitrate", () => {
 
   it("should return the bitrate of the current track", () => {
     const mockTracks = [
-      { id: 1, type: "audio", bandwidth: 128000, active: false },
-      { id: 2, type: "video", bandwidth: 2500000, active: true },
+      { id: 1, type: "audio", videoBandwidth: 128000, active: false },
+      { id: 2, type: "video", videoBandwidth: 2500000, active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
 
     const renditionBitrate = shakaTracker.getRenditionBitrate();
-    expect(renditionBitrate).toEqual(mockTracks[1].bandwidth);
+    expect(renditionBitrate).toEqual(mockTracks[1].videoBandwidth);
+  });
+});
+
+describe("getBitrate", () => {
+  let shakaTracker;
+
+  beforeEach(() => {
+    shakaTracker = new ShakaTracker(player, {});
+  });
+
+  it("should return the bitrate of the player", () => {
+    const mockStats = {
+      streamBandwidth: 5000000,
+    };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const bitrate = shakaTracker.getBitrate();
+    expect(bitrate).toBe(mockStats.streamBandwidth);
   });
 });
 

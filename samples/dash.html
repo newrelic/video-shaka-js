@@ -1,45 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-  <script type="text/javascript" src="agent.js"></script>
+  <head>
+    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
+    <script type="text/javascript" src="agent.js"></script>
 
-  <!-- newrelic tracker -->
-  <script src="../dist/newrelic-video-shaka.min.js"></script>
-    
-  <!-- shaka -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
-</head>
-<body>
-    <video id="myPlayer" width="640" height="480" crossorigin="anonymous" controls></video>
-  <script>
-    async function initPlayer() {
-      // Install polyfills.
-      shaka.polyfill.installAll()
+    <!-- newrelic tracker -->
+    <script src="../dist/newrelic-video-shaka.min.js"></script>
 
-      // Find the video element.
-      var video = document.getElementById('myPlayer')
+    <!-- shaka -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
+  </head>
+  <body>
+    <video
+      id="myPlayer"
+      width="640"
+      height="480"
+      crossorigin="anonymous"
+      controls
+    ></video>
+    <script>
+      async function initPlayer() {
+        // Install polyfills.
+        shaka.polyfill.installAll();
 
-      // Construct a Player to wrap around it.
-      var player = new shaka.Player(video)
+        // Find the video element.
+        var video = document.getElementById("myPlayer");
 
-      // Attach the player to the window so that it can be easily debugged.
-      window.player = player
+        // Construct a Player to wrap around it.
 
-      // source
-      var source = 'https://turtle-tube.appspot.com/t/t2/dash.mpd'
-      
-      try {
-            window.player = player;
-            await player.load(source);
-            // newrelic
-            nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
-          } catch (error) {
-            nrvideo.Core.sendError(error)
-          }
-    }
+        var player = new shaka.Player(video);
 
-    document.addEventListener('DOMContentLoaded', initPlayer)
-  </script>
-</body>
+        // Attach the player to the window so that it can be easily debugged.
+        window.player = player;
+
+        // source
+        var source = "https://turtle-tube.appspot.com/t/t2/dash.mpd";
+
+        try {
+          window.player = player;
+          await player.load(source);
+          // newrelic
+          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+        } catch (error) {
+          nrvideo.Core.sendError(error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", initPlayer);
+    </script>
+  </body>
 </html>
