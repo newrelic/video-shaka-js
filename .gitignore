@@ -19,3 +19,6 @@ coverage/
 
 # logs
 *.log
+
+# ignore agent.js
+samples/agent.js

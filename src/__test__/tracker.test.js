@@ -1,5 +1,5 @@
-import ShakaTracker from "../tracker";
-import { version } from "../../package.json";
+import ShakaTracker from '../tracker';
+import { version } from '../../package.json';
 
 const player = {
   addEventListener: jest.fn(),
@@ -10,44 +10,44 @@ const player = {
   isLive: jest.fn(),
 };
 
-describe("ShakaTracker", () => {
+describe('ShakaTracker', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("Should return the tracker name", () => {
+  it('Should return the tracker name', () => {
     const trackerName = shakaTracker.getTrackerName();
-    expect(trackerName).toBe("shaka");
+    expect(trackerName).toBe('shaka');
   });
 
-  it("Should return the tracker version", () => {
+  it('Should return the tracker version', () => {
     const trackerVersion = shakaTracker.getTrackerVersion();
     expect(trackerVersion).toBe(version);
   });
 
-  it("isLive should return false if player is not dynamic", () => {
+  it('isLive should return false if player is not dynamic', () => {
     shakaTracker.isLive = jest.fn().mockReturnValue(false);
     const isLive = shakaTracker.isLive();
     expect(isLive).toBe(false);
   });
 
-  it("should call setPlayer method of Shaka Tracker", () => {
-    const tag = " ";
+  it('should call setPlayer method of Shaka Tracker', () => {
+    const tag = ' ';
     shakaTracker.setPlayer = jest.fn();
     shakaTracker.setPlayer(player, tag);
     expect(shakaTracker.setPlayer).toHaveBeenCalledWith(player, tag);
   });
 
-  it("should return the playrate of the player", () => {
+  it('should return the playrate of the player', () => {
     const rate = 1;
     shakaTracker.getPlayrate = player.getPlaybackRate.mockReturnValue(rate);
     expect(shakaTracker.getPlayrate()).toBe(rate);
   });
 
-  it("Should return the player version", () => {
-    const mockVersion = "3.2.1";
+  it('Should return the player version', () => {
+    const mockVersion = '3.2.1';
     global.shaka = {
       Player: {
         version: mockVersion,
@@ -59,17 +59,17 @@ describe("ShakaTracker", () => {
   });
 });
 
-describe("getTrack", () => {
+describe('getTrack', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the current track", () => {
+  it('should return the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", active: false },
-      { id: 2, type: "video", active: true },
+      { id: 1, type: 'audio', active: false },
+      { id: 2, type: 'video', active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -80,10 +80,10 @@ describe("getTrack", () => {
     expect(track.active).toEqual(mockTracks[1].active);
   });
 
-  it("should return null if no track is available", () => {
+  it('should return null if no track is available', () => {
     const mockTracks = [
-      { id: 1, type: "audio", active: false },
-      { id: 2, type: "video", active: false },
+      { id: 1, type: 'audio', active: false },
+      { id: 2, type: 'video', active: false },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -93,30 +93,30 @@ describe("getTrack", () => {
   });
 });
 
-describe("getPlayerName", () => {
+describe('getPlayerName', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the player name", () => {
+  it('should return the player name', () => {
     const playerName = shakaTracker.getPlayerName();
-    expect(playerName).toBe("Shaka");
+    expect(playerName).toBe('Shaka');
   });
 });
 
-describe("getLanguage", () => {
+describe('getLanguage', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the language of the current track", () => {
+  it('should return the language of the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", language: "en", active: false },
-      { id: 2, type: "video", language: "fr", active: true },
+      { id: 1, type: 'audio', language: 'en', active: false },
+      { id: 2, type: 'video', language: 'fr', active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -126,17 +126,17 @@ describe("getLanguage", () => {
   });
 });
 
-describe("getRenditionName", () => {
+describe('getRenditionName', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the label of the current track", () => {
+  it('should return the label of the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", label: "English", active: false },
-      { id: 2, type: "video", label: "HD", active: true },
+      { id: 1, type: 'audio', label: 'English', active: false },
+      { id: 2, type: 'video', label: 'HD', active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -146,17 +146,17 @@ describe("getRenditionName", () => {
   });
 });
 
-describe("getRenditionWidth", () => {
+describe('getRenditionWidth', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the width of the current track", () => {
+  it('should return the width of the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", width: 0, active: false },
-      { id: 2, type: "video", width: 1920, active: true },
+      { id: 1, type: 'audio', width: 0, active: false },
+      { id: 2, type: 'video', width: 1920, active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -166,17 +166,17 @@ describe("getRenditionWidth", () => {
   });
 });
 
-describe("getRenditionHeight", () => {
+describe('getRenditionHeight', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the height of the current track", () => {
+  it('should return the height of the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", height: 0, active: false },
-      { id: 2, type: "video", height: 1080, active: true },
+      { id: 1, type: 'audio', height: 0, active: false },
+      { id: 2, type: 'video', height: 1080, active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -186,35 +186,35 @@ describe("getRenditionHeight", () => {
   });
 });
 
-describe("isLive", () => {
+describe('isLive', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return true if player is dynamic", () => {
+  it('should return true if player is dynamic', () => {
     player.isLive = jest.fn().mockReturnValue(true);
     const isLive = shakaTracker.isLive();
     expect(isLive).toBe(true);
   });
 
-  it("should return false if player is not dynamic", () => {
+  it('should return false if player is not dynamic', () => {
     player.isLive = jest.fn().mockReturnValue(false);
     const isLive = shakaTracker.isLive();
     expect(isLive).toBe(false);
   });
 });
 
-describe("getSrc", () => {
+describe('getSrc', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the asset URI of the player", () => {
-    const mockAssetUri = "https://example.com/video.mp4";
+  it('should return the asset URI of the player', () => {
+    const mockAssetUri = 'https://example.com/video.mp4';
     player.getAssetUri = jest.fn().mockReturnValue(mockAssetUri);
 
     const src = shakaTracker.getSrc();
@@ -222,14 +222,14 @@ describe("getSrc", () => {
   });
 });
 
-describe("getPlayrate", () => {
+describe('getPlayrate', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the playback rate of the player", () => {
+  it('should return the playback rate of the player', () => {
     const mockPlaybackRate = 1.5;
     player.getPlaybackRate.mockReturnValue(mockPlaybackRate);
 
@@ -238,34 +238,34 @@ describe("getPlayrate", () => {
   });
 });
 
-describe("getRenditionBitrate", () => {
+describe('getRenditionBitrate', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the bitrate of the current track", () => {
+  it('should return the bitrate of the current track', () => {
     const mockTracks = [
-      { id: 1, type: "audio", videoBandwidth: 128000, active: false },
-      { id: 2, type: "video", videoBandwidth: 2500000, active: true },
+      { id: 1, type: 'audio', bandwidth: 128000, active: false },
+      { id: 2, type: 'video', bandwidth: 2500000, active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
 
     const renditionBitrate = shakaTracker.getRenditionBitrate();
-    expect(renditionBitrate).toEqual(mockTracks[1].videoBandwidth);
+    expect(renditionBitrate).toEqual(mockTracks[1].bandwidth);
   });
 });
 
-describe("getBitrate", () => {
+describe('getBitrate', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should return the bitrate of the player", () => {
+  it('should return the bitrate of the player', () => {
     const mockStats = {
       streamBandwidth: 5000000,
     };
@@ -276,14 +276,14 @@ describe("getBitrate", () => {
   });
 });
 
-describe("registerListeners", () => {
+describe('registerListeners', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should register event listeners for various video events", () => {
+  it('should register event listeners for various video events', () => {
     const mockOnDownload = jest.fn();
     const mockOnPlay = jest.fn();
     const mockOnPlaying = jest.fn();
@@ -309,52 +309,52 @@ describe("registerListeners", () => {
     shakaTracker.registerListeners();
 
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "pause",
+      'pause',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "ended",
+      'ended',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "play",
+      'play',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadedmetadata",
+      'loadedmetadata',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadeddata",
+      'loadeddata',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadstart",
+      'loadstart',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "playing",
+      'playing',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "seeking",
+      'seeking',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "error",
+      'error',
       expect.any(Function)
     );
   });
 });
 
-describe("unregisterListeners", () => {
+describe('unregisterListeners', () => {
   let shakaTracker;
 
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it("should unregister event listeners for various video events", () => {
+  it('should unregister event listeners for various video events', () => {
     const mockOff = jest.fn();
 
     shakaTracker.tag.off = mockOff;
@@ -363,45 +363,45 @@ describe("unregisterListeners", () => {
     shakaTracker.unregisterListeners();
 
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "pause",
+      'pause',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "ended",
+      'ended',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "play",
+      'play',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadedmetadata",
+      'loadedmetadata',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadeddata",
+      'loadeddata',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "loadstart",
+      'loadstart',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "playing",
+      'playing',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "seeking",
+      'seeking',
       expect.any(Function)
     );
     expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
-      "error",
+      'error',
       expect.any(Function)
     );
   });
 });
 
-describe("Tracker Event Handlers", () => {
+describe('Tracker Event Handlers', () => {
   let shakaTracker;
   beforeEach(() => {
     shakaTracker = new ShakaTracker(player, {});
@@ -421,65 +421,65 @@ describe("Tracker Event Handlers", () => {
     shakaTracker.sendEnd = jest.fn();
   });
 
-  it("should call sendDownload on onDownload", () => {
-    const eventMock = { type: "download" };
+  it('should call sendDownload on onDownload', () => {
+    const eventMock = { type: 'download' };
     shakaTracker.onDownload(eventMock);
     expect(shakaTracker.sendDownload).toHaveBeenCalledWith({
       state: eventMock.type,
     });
   });
 
-  it("should call sendRequest on onPlay", () => {
+  it('should call sendRequest on onPlay', () => {
     shakaTracker.onPlay();
     expect(shakaTracker.sendRequest).toHaveBeenCalled();
   });
 
-  it("should call sendResume and sendStart on onPlaying", () => {
+  it('should call sendResume and sendStart on onPlaying', () => {
     shakaTracker.onPlaying();
     expect(shakaTracker.sendResume).toHaveBeenCalled();
     expect(shakaTracker.sendStart).toHaveBeenCalled();
   });
 
-  it("should call sendRenditionChanged on onAdaptation", () => {
-    const event = { type: "adaptation" };
+  it('should call sendRenditionChanged on onAdaptation', () => {
+    const event = { type: 'adaptation' };
     shakaTracker.onAdaptation(event);
     expect(shakaTracker.sendRenditionChanged).toHaveBeenCalled();
   });
 
-  it("should call sendBufferStart on onBufferingStalled", () => {
+  it('should call sendBufferStart on onBufferingStalled', () => {
     const event = { buffering: true };
     shakaTracker.onBuffering(event);
     expect(shakaTracker.sendBufferStart).toHaveBeenCalled();
   });
 
-  it("should call sendBufferEnd on onBufferingLoaded", () => {
+  it('should call sendBufferEnd on onBufferingLoaded', () => {
     const event = { buffering: false };
     shakaTracker.onBuffering(event);
     expect(shakaTracker.sendBufferEnd).toHaveBeenCalled();
   });
 
-  it("should call sendPause on onPause", () => {
+  it('should call sendPause on onPause', () => {
     shakaTracker.onPause();
     expect(shakaTracker.sendPause).toHaveBeenCalled();
   });
 
-  it("should call sendSeekStart on onSeeking", () => {
+  it('should call sendSeekStart on onSeeking', () => {
     shakaTracker.onSeeking();
     expect(shakaTracker.sendSeekStart).toHaveBeenCalled();
   });
 
-  it("should call sendSeekEnd on onSeeked", () => {
+  it('should call sendSeekEnd on onSeeked', () => {
     shakaTracker.onSeeked();
     expect(shakaTracker.sendSeekEnd).toHaveBeenCalled();
   });
 
-  it("should call sendError on onError", () => {
-    const event = { detail: "error" };
+  it('should call sendError on onError', () => {
+    const event = { detail: 'error' };
     shakaTracker.onError(event);
     expect(shakaTracker.sendError).toHaveBeenCalledWith(event.detail);
   });
 
-  it("should call sendEnd on onEnded", () => {
+  it('should call sendEnd on onEnded', () => {
     shakaTracker.onEnded();
     expect(shakaTracker.sendEnd).toHaveBeenCalled();
   });

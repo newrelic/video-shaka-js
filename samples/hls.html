@@ -1,50 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shaka HLS Player</title>
-  <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-  <script type="text/javascript" src="agent.js"></script>
+    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
+    <script type="text/javascript" src="agent.js"></script>
 
-  <!-- newrelic tracker -->
-  <script src="../dist/newrelic-video-shaka.min.js"></script>
-    
-  <!-- shaka -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
+    <!-- newrelic tracker -->
+    <script src="../dist/newrelic-video-shaka.min.js"></script>
 
-</head>
-<body>
-    <video id="myPlayer" width="640" height="480" crossorigin="anonymous" controls></video>
-  <script>
-    async function initPlayer() {
-      // Install polyfills.
-      shaka.polyfill.installAll()
+    <!-- shaka -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
+  </head>
+  <body>
+    <video
+      id="myPlayer"
+      width="640"
+      height="480"
+      crossorigin="anonymous"
+      controls
+    ></video>
+    <script>
+      async function initPlayer() {
+        // Install polyfills.
+        shaka.polyfill.installAll();
 
-      // Find the video element.
-      var video = document.getElementById('myPlayer')
+        // Find the video element.
+        var video = document.getElementById('myPlayer');
 
-      // Construct a Player to wrap around it.
-      var player = new shaka.Player(video)
+        // Construct a Player to wrap around it.
+        var player = new shaka.Player(video);
 
-      // Attach the player to the window so that it can be easily debugged.
-      // window.player = player
+        // Attach the player to the window so that it can be easily debugged.
+        // window.player = player
 
-      // // source
-      var source = 'http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8'
+        // // source
+        var source = 'http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8';
 
-       // Load the source into the Player.
-      try {
-            window.player = player;
-            await player.load(source);
-            // newrelic
-            nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
-          } catch (e) {
-            nrvideo.Core.sendError(error);
-          }
-    }
-    
-    document.addEventListener('DOMContentLoaded', initPlayer)
-  </script>
-</body>
+        // Load the source into the Player.
+        try {
+          window.player = player;
+          await player.load(source);
+          // newrelic
+          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+        } catch (e) {
+          nrvideo.Core.sendError(error);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', initPlayer);
+    </script>
+  </body>
 </html>
