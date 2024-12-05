@@ -16,5 +16,9 @@ coverage/
 .nyc_output
 *.zip
 
+
 # logs
 *.log
+
+# ignore agent.js
+samples/agent.js

@@ -1,44 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shaka Player MSS Example</title>
-  <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-  <script type="text/javascript" src="agent.js"></script>
-  <!-- newrelic tracker -->
-  <script src="../dist/newrelic-video-shaka.min.js"></script>
-  <!-- shaka -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.js"></script>
-  <!-- MSS support only with codem-isoboxer javaScript MP4 (MPEG-4, ISOBMFF) parser -->
-  <script defer src="../node_modules/codem-isoboxer/dist/iso_boxer.min.js"></script>
-</head>
-<body>
-  <video id="myPlayer" width="640" height="480" crossorigin="anonymous" controls autoplay></video>
-  <script>
-    async function initPlayer() {
-      // Install polyfills.
-      shaka.polyfill.installAll()
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shaka Player MSS Example</title>
+    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
+    <script type="text/javascript" src="agent.js"></script>
+    <!-- newrelic tracker -->
+    <script src="../dist/newrelic-video-shaka.min.js"></script>
+    <!-- shaka -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.js"></script>
+    <!-- MSS support only with codem-isoboxer javaScript MP4 (MPEG-4, ISOBMFF) parser -->
+    <script
+      defer
+      src="../node_modules/codem-isoboxer/dist/iso_boxer.min.js"
+    ></script>
+  </head>
+  <body>
+    <video
+      id="myPlayer"
+      width="640"
+      height="480"
+      crossorigin="anonymous"
+      controls
+      autoplay
+    ></video>
+    <script>
+      async function initPlayer() {
+        // Install polyfills.
+        shaka.polyfill.installAll();
 
-      // Find the video element.
-      var video = document.getElementById('myPlayer')
+        // Find the video element.
+        var video = document.getElementById('myPlayer');
 
-      // Construct a Player to wrap around it.
-      var player = new shaka.Player(video);
+        // Construct a Player to wrap around it.
+        var player = new shaka.Player(video);
 
-      // source
-      var source = 'https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest';
+        // source
+        var source =
+          'https://playready.directtaps.net/smoothstreaming/SSWSS720H264/SuperSpeedway_720.ism/Manifest';
 
-      // Load the source into the Player.
-      try {
-            await player.load(source);
-            // newrelic
-            nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
-          } catch (error) {
-            nrvideo.Core.sendError(error)
-          }
-    }
-    
-    document.addEventListener('DOMContentLoaded', initPlayer)
-  </script>
-</body>
+        // Load the source into the Player.
+        try {
+          await player.load(source);
+          // newrelic
+          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+        } catch (error) {
+          nrvideo.Core.sendError(error);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', initPlayer);
+    </script>
+  </body>
 </html>
