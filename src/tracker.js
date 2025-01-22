@@ -39,6 +39,8 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.player.getPlaybackRate();
   }
 
+  getContentPlayhead() {}
+
   getTrack() {
     var tracks = this.player.getVariantTracks();
     for (var i in tracks) {
@@ -168,7 +170,10 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onError(e) {
-    this.sendError(e.detail);
+    const error = e.detail;
+    const errorCode = error.code;
+    const errorName = error.message;
+    this.sendError({ errorCode, errorName });
   }
 
   onEnded() {
