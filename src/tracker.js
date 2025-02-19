@@ -39,8 +39,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.player.getPlaybackRate();
   }
 
-  getContentPlayhead() {}
-
   getTrack() {
     var tracks = this.player.getVariantTracks();
     for (var i in tracks) {
