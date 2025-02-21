@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [3.0.0] - 2025/02/21
+
+### New Event Type Introduced [VideoAction, VideoErrorAction, VideoAdAction, VideoCustomAction]
+
+- PageAction Deprecated.
+- Some New Attributes Introduced.
+
 ## [0.4.0] - 2024/10/07
 
 ### Update
