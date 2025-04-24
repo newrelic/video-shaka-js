@@ -170,8 +170,8 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   onError(e) {
     const error = e.detail;
     const errorCode = error.code;
-    const errorName = error.message;
-    this.sendError({ errorCode, errorName });
+    const errorMessage = error.message;
+    this.sendError({ errorCode, errorMessage });
   }
 
   onEnded() {
