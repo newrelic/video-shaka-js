@@ -1,51 +1,75 @@
-[![New Relic Experimental header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#new-relic-experimental)
+[![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Community_Project.png)](https://opensource.newrelic.com/oss-category/#community-project)
 
-# New Relic Shaka Tracker
+# New Relic Shaka Tracker Agent
 
-New Relic video tracking for Shaka Player.
+The New Relic Shaka Tracker enhances your media applications by tracking video events, playback errors, and other activities, providing comprehensive insights into performance and user interactions.
 
-## Requirements
+- The Shaka tracker is available as a ready-to-use JavaScript snippet for easy copy-paste integration.
+- New Relic Shaka tracker auto-detects events emitted by Shaka Player.
+- Ensure that the **Browser agent** is successfully instrumented before deploying the media tracker.
+- For questions and feedback on this package, please visit the [Explorer's Hub](https://discuss.newrelic.com), New Relic's community support forum.
+- Looking to contribute to the Player Name agent code base? See [DEVELOPING.md](./DEVELOPING.md) for instructions on building and testing the browser agent library, and Contributors.
 
-This video monitor solutions works on top of New Relic's **Browser Agent**.
+## Adding The Shaka Tracker To Your Project
 
-## Build
-
-Install dependencies:
-
-```
-$ npm install
-```
-
-And build:
-
-```
-$ npm run build:dev
-```
-
-Or if you need a production build:
-
-```
-$ npm run build
-```
-
-## Usage
-
-Load **scripts** inside `dist` folder into your page.
+To integrate New Relic Tracker Agent into your web application effectively, you'll need to instrument the Browser Agent code first and then add the player script. Below is a guide on how to do this within your HTML file:
 
 ```html
-<script src="../dist/newrelic-video-shaka.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Relic Tracker Integration</title>
+    <script src="path/to/browser-agent.js"></script>
+    <!-- snippet code generated  -->
+    <script src="path/to/Shaka-tracker.js"></script>
+  </head>
+  <body>
+    <!-- Your HTML content -->
+  </body>
+</html>
 ```
 
+## Instantiating the Shaka Tracker
+
 ```javascript
-// var player = new shaka.Player(...)
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player))
+// Add a ShakaTracker
+nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+
+// For setting userId
+nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player)).setUserId('userId');
+
+//For setting custom attributes const tracker
+const tracker = new nrvideo.ShakajsTracker(player, {
+  customData: {
+    contentTitle: 'Override Existing Title',
+    customPlayerName: 'myGreatPlayer',
+    customPlayerVersion: '9.4.2',
+  },
+});
+
+// For Sending custom Action with Attributes
+
+const tracker = new nrvideo.ShakaTracker(player);
+
+nrvideo.Core.addTracker(tracker);
+
+tracker.sendCustom('CUSTOM_ACTION', 'state time', {
+  test1: 'value1',
+  test2: 'value2',
+});
 ```
+
+## Data Model
+
+To understand which actions and attributes are captured and emitted by the Shaka Player under different event types, see [DataModel.md](./DATAMODEL.md).
 
 ## Support
 
-New Relic has open-sourced this project. This project is provided AS-IS WITHOUT WARRANTY OR DEDICATED SUPPORT. Issues and contributions should be reported to the project here on GitHub.
+New Relic hosts and moderates an online forum where customers can interact with New Relic employees as well as other customers to get help and share best practices. Like all official New Relic open source projects, there's a related Community topic in the New Relic [Explorer's Hub](https://discuss.newrelic.com).
 
-We encourage you to bring your experiences and questions to the [Explorers Hub](https://discuss.newrelic.com) where our community members collaborate on solutions and new ideas.
+We encourage you to bring your experiences and questions to the [Explorer's Hub](https://discuss.newrelic.com) where our community members collaborate on solutions and new ideas.
 
 ## Contributing
 

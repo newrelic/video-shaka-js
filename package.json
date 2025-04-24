@@ -1,14 +1,14 @@
 {
   "name": "newrelic-video-shaka",
-  "version": "0.3.0",
+  "version": "3.0.0",
   "description": "New relic tracker for shaka player",
   "main": "src/index.js",
   "scripts": {
     "test": "jest --coverage",
-    "build": "webpack -p",
+    "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "watch": "webpack -p --progress --color --watch",
-    "watch:dev": "webpack --progress --color --watch",
+    "watch": "webpack  --progress --color --watch --mode production",
+    "watch:dev": "webpack --progress --color --watch --mode development",
     "prezip": "npm run build",
     "zip": "zip -P newrelic -x '*.DS_Store' -r shaka.zip dist samples README.md CHANGELOG.md EULA.md",
     "clean": "rm -rf dist *.zip",
@@ -22,15 +22,15 @@
   "license": "MIT",
   "dependencies": {
     "codem-isoboxer": "^0.3.10",
-    "newrelic-video-core": "git+https://github.com/newrelic/video-core-js.git"
+    "newrelic-video-core": "github:newrelic/video-core-js#stable"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
     "@babel/preset-env": "^7.0.0",
     "aws-sdk": "^2.920.0",
-    "babel-loader": "^8.0.0",
     "babel-jest": "^29.7.0",
+    "babel-loader": "^8.0.0",
     "jest": "^29.7.0",
     "videojs-ima": "^0.6.0",
     "webpack": "^5.94.0",
