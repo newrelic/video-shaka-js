@@ -83,7 +83,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   getPlayerVersion() {
-    return shaka.Player.version;
+    return this.Player?.version;
   }
 
   registerListeners() {
