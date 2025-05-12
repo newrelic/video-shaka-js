@@ -35,13 +35,13 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
 
 ```javascript
 // Add a ShakaTracker
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+ const tracker = new ShakaTracker(player);
 
 // For setting userId
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player)).setUserId('userId');
+tracker.setUserId('userId');
 
 //For setting custom attributes const tracker
-const tracker = new nrvideo.ShakajsTracker(player, {
+const tracker = new ShakaTracker(player, {
   customData: {
     contentTitle: 'Override Existing Title',
     customPlayerName: 'myGreatPlayer',
@@ -51,9 +51,7 @@ const tracker = new nrvideo.ShakajsTracker(player, {
 
 // For Sending custom Action with Attributes
 
-const tracker = new nrvideo.ShakaTracker(player);
-
-nrvideo.Core.addTracker(tracker);
+const tracker = new ShakaTracker(player);
 
 tracker.sendCustom('CUSTOM_ACTION', 'state time', {
   test1: 'value1',
