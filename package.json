@@ -43,7 +43,7 @@
   "files": [
     "THIRD_PARTY_NOTICES.md",
     "dist",
-    "LICENSE",
+    "CHANGELOG.md",
     "README.md",
     "!test"
   ]
