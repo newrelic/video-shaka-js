@@ -31,11 +31,26 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
 </html>
 ```
 
-## Instantiating the Shaka Tracker
+## Adding the agent package to your project
 
+To make the tracker available to your application, install via [NPM](https://docs.npmjs.com/cli/v8/commands/npm-install) or [Yarn](https://classic.yarnpkg.com/lang/en/docs/cli/install/).
+
+```shell
+$ npm install @newrelic/video-shaka
+```
+
+```shell
+$ yarn add @newrelic/video-shaka
+```
+
+## Instantiating the Shaka Tracker
 ```javascript
+
+import ShakaTracker from "@newrelic/video-shaka"; 
+
 // Add a ShakaTracker
- const tracker = new ShakaTracker(player);
+  player.version = shaka.Player.version;
+  const tracker = new ShakaTracker(player);
 
 // For setting userId
 tracker.setUserId('userId');
