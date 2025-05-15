@@ -1,5 +1,3 @@
-import * as nrvideo from 'newrelic-video-core';
-import Tracker from './tracker';
+import ShakaTracker from './tracker';
 
-nrvideo.ShakaTracker = Tracker;
-module.exports = nrvideo;
+export default ShakaTracker;

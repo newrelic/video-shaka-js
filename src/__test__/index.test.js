@@ -1,4 +1,4 @@
-import * as nrvideo from "newrelic-video-core";
+import nrvideo from '@newrelic/video-core'
 import Tracker from "../tracker";
 
 const exportedModule = require("../index");
