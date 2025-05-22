@@ -21,7 +21,7 @@ var license =
     entry: './src/index.js',
     output: {
       path: path.resolve(__dirname, './dist/umd'),
-      filename: 'shaka' + '.min.js',
+      filename:  "newrelic-video-shaka.min.js",
       library: 'ShakaTracker',
       libraryTarget: 'umd',
       libraryExport: "default", 
