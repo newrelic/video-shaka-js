@@ -1,5 +1,7 @@
-import * as nrvideo from 'newrelic-video-core';
-import { version } from '../package.json';
+import * as nrvideo from "newrelic-video-core";
+import { version } from "../package.json";
+import ShakaToNewRelicMapper from "./utils/mapper";
+
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
   setPlayer(player, tag) {
@@ -32,7 +34,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   getSrc() {
-    return this.player.getAssetUri();
+    return this.player.getAssetUri()
   }
 
   getPlayrate() {
@@ -101,33 +103,48 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
       'trackschanged',
     ]);
 
-    this.tag.addEventListener('pause', this.onPause.bind(this));
-    this.tag.addEventListener('ended', this.onEnded.bind(this));
-    this.tag.addEventListener('play', this.onPlay.bind(this));
-    this.tag.addEventListener('loadedmetadata', this.onDownload.bind(this));
-    this.tag.addEventListener('loadeddata', this.onDownload.bind(this));
-    this.tag.addEventListener('loadstart', this.onDownload.bind(this));
-    this.tag.addEventListener('playing', this.onPlaying.bind(this));
-    this.tag.addEventListener('seeking', this.onSeeking.bind(this));
-    this.tag.addEventListener('seeked', this.onSeeked.bind(this));
-    this.tag.addEventListener('error', this.onError.bind(this));
+    this.onLoadStartListener = this.onDownload.bind(this);
+    this.onLoadedMetadataListener = this.onDownload.bind(this);
+    this.onLoadedDataListener = this.onDownload.bind(this);
+    this.onPlayListener = this.onPlay.bind(this);
+    this.onPlayingListener = this.onPlaying.bind(this);
+    this.onPauseListener = this.onPause.bind(this);
+    this.onSeekingListener = this.onSeeking.bind(this);
+    this.onSeekedListener = this.onSeeked.bind(this);
+    this.onErrorListener = this.onError.bind(this);
+    this.onEndedListener = this.onEnded.bind(this);
+    this.onBufferingListener = this.onBuffering.bind(this);
+    this.onAdaptationListener = this.onAdaptation.bind(this);
 
-    this.player.addEventListener('buffering', this.onBuffering.bind(this));
-    this.player.addEventListener('adaptation', this.onAdaptation.bind(this));
+    this.tag.addEventListener("loadstart", this.onLoadStartListener);
+    this.tag.addEventListener("loadedmetadata", this.onLoadedMetadataListener);
+    this.tag.addEventListener("loadeddata", this.onLoadedDataListener);
+    this.tag.addEventListener("play", this.onPlayListener);
+    this.tag.addEventListener("playing", this.onPlayingListener);
+    this.tag.addEventListener("pause", this.onPauseListener);
+    this.tag.addEventListener("seeking", this.onSeekingListener);
+    this.tag.addEventListener("seeked", this.onSeekedListener);
+    this.tag.addEventListener("ended", this.onEndedListener);
+
+    this.player.addEventListener("error", this.onErrorListener);
+    this.player.addEventListener("buffering", this.onBufferingListener);
+    this.player.addEventListener("adaptation", this.onAdaptationListener);
   }
 
-  unregisterListeners() {
-    this.tag.removeEventListener('loadeddata', this.onDownload);
-    this.tag.removeEventListener('play', this.onPlay);
-    this.tag.removeEventListener('playing', this.onPlaying);
-    this.tag.removeEventListener('pause', this.onPause);
-    this.tag.removeEventListener('seeking', this.onSeeking);
-    this.tag.removeEventListener('seeked', this.onSeeked);
-    this.tag.removeEventListener('error', this.onError);
-    this.tag.removeEventListener('ended', this.onEnded);
+  unregisterListeners () {
+    this.tag.removeEventListener("loadstart", this.onLoadStartListener);
+    this.tag.removeEventListener("loadedmetadata", this.onLoadedMetadataListener);
+    this.tag.removeEventListener("loadeddata", this.onLoadedDataListener);
+    this.tag.removeEventListener("play", this.onPlayListener);
+    this.tag.removeEventListener("playing", this.onPlayingListener);
+    this.tag.removeEventListener("pause", this.onPauseListener);
+    this.tag.removeEventListener("seeking", this.onSeekingListener);
+    this.tag.removeEventListener("seeked", this.onSeekedListener);
+    this.tag.removeEventListener("ended", this.onEndedListener);
 
-    this.player.removeEventListener('loadstart', this.onDownload);
-    this.player.removeEventListener('loadedmetadata', this.onDownload);
+    this.player.removeEventListener("error", this.onErrorListener);
+    this.player.removeEventListener("buffering", this.onBufferingListener);
+    this.player.removeEventListener("adaptation", this.onAdaptationListener);
   }
 
   onDownload(e) {
@@ -168,10 +185,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onError(e) {
-    const error = e.detail;
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    this.sendError({ errorCode, errorMessage });
+    this.sendError(ShakaToNewRelicMapper.mapErrorAttributes(e.detail));
   }
 
   onEnded() {
