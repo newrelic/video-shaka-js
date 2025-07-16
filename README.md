@@ -31,17 +31,32 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
 </html>
 ```
 
-## Instantiating the Shaka Tracker
+## Adding the agent package to your project
 
+To make the tracker available to your application, install via [NPM](https://docs.npmjs.com/cli/v8/commands/npm-install) or [Yarn](https://classic.yarnpkg.com/lang/en/docs/cli/install/).
+
+```shell
+$ npm install @newrelic/video-shaka
+```
+
+```shell
+$ yarn add @newrelic/video-shaka
+```
+
+## Instantiating the Shaka Tracker
 ```javascript
+
+import ShakaTracker from "@newrelic/video-shaka"; 
+
 // Add a ShakaTracker
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+  player.version = shaka.Player.version;
+  const tracker = new ShakaTracker(player);
 
 // For setting userId
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player)).setUserId('userId');
+tracker.setUserId('userId');
 
 //For setting custom attributes const tracker
-const tracker = new nrvideo.ShakajsTracker(player, {
+const tracker = new ShakaTracker(player, {
   customData: {
     contentTitle: 'Override Existing Title',
     customPlayerName: 'myGreatPlayer',
@@ -51,9 +66,7 @@ const tracker = new nrvideo.ShakajsTracker(player, {
 
 // For Sending custom Action with Attributes
 
-const tracker = new nrvideo.ShakaTracker(player);
-
-nrvideo.Core.addTracker(tracker);
+const tracker = new ShakaTracker(player);
 
 tracker.sendCustom('CUSTOM_ACTION', 'state time', {
   test1: 'value1',
