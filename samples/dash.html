@@ -5,7 +5,7 @@
     <script type="text/javascript" src="agent.js"></script>
 
     <!-- newrelic tracker -->
-    <script src="../dist/newrelic-video-shaka.min.js"></script>
+    <script src="../dist/umd/newrelic-video-shaka.min.js"></script>
 
     <!-- shaka -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
@@ -40,9 +40,18 @@
           window.player = player;
           await player.load(source);
           // newrelic
-          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          const options = {
+            info: {
+              beacon: 'xxxxxxxxxx',
+              errorBeacon: 'xxxxxxxxxxxx',
+              licenseKey: 'xxxxxxxxxxxxxxxx',
+              applicationID: 'xxxxxxxxxx',
+              sa: 1,
+            },
+          };
+          new ShakaTracker(player, options);
         } catch (error) {
-          nrvideo.Core.sendError(error);
+          console.log(error.message);
         }
       }
 

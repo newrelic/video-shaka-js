@@ -4,9 +4,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shaka Player MSS Example</title>
     <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
+    <!-- <script type="text/javascript" src="agent.js"></script> -->
     <!-- newrelic tracker -->
-    <script src="../dist/newrelic-video-shaka.min.js"></script>
+    <script src="../dist/umd/newrelic-video-shaka.min.js"></script>
     <!-- shaka -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.js"></script>
     <!-- MSS support only with codem-isoboxer javaScript MP4 (MPEG-4, ISOBMFF) parser -->
@@ -31,9 +31,18 @@
 
         // Find the video element.
         var video = document.getElementById('myPlayer');
+        const options = {
+          info: {
+            beacon: 'staging-bam-cell.nr-data.net',
+            errorBeacon: 'staging-bam-cell.nr-data.net',
+            licenseKey: 'NRBR-28f429b8d172936a29d',
+            applicationID: '248586773',
+            sa: 1,
+          },
+        };
 
         // Construct a Player to wrap around it.
-        var player = new shaka.Player(video);
+        var player = new shaka.Player(video, options);
 
         // source
         var source =
@@ -43,9 +52,18 @@
         try {
           await player.load(source);
           // newrelic
-          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          const options = {
+            info: {
+              beacon: 'xxxxxxxxxxxx',
+              errorBeacon: 'xxxxxxxxxxxx',
+              licenseKey: 'xxxxxxxxxxxx',
+              applicationID: 'xxxxxxxxxxxx',
+              sa: 1,
+            },
+          };
+          new Shakatracker(player, options);
         } catch (error) {
-          nrvideo.Core.sendError(error);
+          console.log(error.message);
         }
       }
 
