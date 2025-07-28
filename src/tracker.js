@@ -9,6 +9,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   setPlayer(player, tag) {
     if (!tag && player.getMediaElement) tag = player.getMediaElement();
     nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag);
+    nrvideo.Core.addTracker(this);
   }
 
   getTrackerName() {

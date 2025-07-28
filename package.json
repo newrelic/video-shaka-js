@@ -23,7 +23,7 @@
   "author": "Jordi Aguilar",
   "license": "MIT",
   "dependencies": {
-    "@newrelic/video-core": "/Users/cmalay/Desktop/malay/standalone/video-shaka-js/newrelic-video-core-3.1.1.tgz",
+    "@newrelic/video-core": "^3.1.0",
     "codem-isoboxer": "^0.3.10"
   },
   "devDependencies": {
