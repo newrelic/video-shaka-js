@@ -1,5 +1,6 @@
 import nrvideo from '@newrelic/video-core'
 import { version } from '../package.json';
+import ShakaToNewRelicMapper from "./utils/shakaToNewRelicMapper";
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
   setPlayer(player, tag) {
@@ -170,9 +171,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
 
   onError(e) {
     const error = e.detail;
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    this.sendError({ errorCode, errorMessage });
+    this.sendError(ShakaToNewRelicMapper.mapErrorAttributes(error));
   }
 
   onEnded() {
