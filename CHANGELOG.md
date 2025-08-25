@@ -6,6 +6,12 @@
 
 - **Standalone Agent:** This tracker now operates independently with its own authorization details, removing the dependency on a browser agent.
 
+### Enhancements
+- Improved error logging by mapping Shaka errors to the following attributes: `errorCode`, `errorPlatformCode`, `errorMessage`, `errorStackTrace`, `errorSeverity`.
+
+### Updates
+- Attached the error `EventListener` to the player instead of its tag, following Shaka's specifications, to fix the `CONTENT_ERROR` event.
+
 ## [3.1.0] - 2025-05-27
 
 ### Enhancements
