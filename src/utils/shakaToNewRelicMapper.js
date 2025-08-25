@@ -10,7 +10,7 @@ const SHAKA_SEVERITY_MAP = {
   2: 'CRITICAL'
 };
 
-class ShakaToNewRelicMapper {
+export default class ShakaToNewRelicMapper {
   static mapErrorAttributes(attributes) {
     if (!attributes || typeof attributes !== 'object') return attributes;
 
@@ -29,5 +29,3 @@ class ShakaToNewRelicMapper {
     };
   }
 }
-
-export default ShakaToNewRelicMapper;
