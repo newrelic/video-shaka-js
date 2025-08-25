@@ -340,7 +340,7 @@ describe('registerListeners', () => {
       'seeking',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.player.addEventListener).toHaveBeenCalledWith(
       'error',
       expect.any(Function)
     );
@@ -394,7 +394,7 @@ describe('unregisterListeners', () => {
       'seeking',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.player.addEventListener).toHaveBeenCalledWith(
       'error',
       expect.any(Function)
     );
