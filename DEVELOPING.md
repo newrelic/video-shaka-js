@@ -37,7 +37,15 @@ Load **scripts** inside `dist` folder into your page.
 ```
 
 ```javascript
-nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+const options = {
+  info: {
+    beacon: 'xxxxxxxxxx',
+    applicationID: 'xxxxxxx',
+    licenseKey: 'xxxxxxxxxxx',
+  },
+};
+
+const tracker = new ShakaTracker(player, options);
 ```
 
 ## Release

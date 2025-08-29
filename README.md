@@ -6,7 +6,6 @@ The New Relic Shaka Tracker enhances your media applications by tracking video e
 
 - The Shaka tracker is available as a ready-to-use JavaScript snippet for easy copy-paste integration.
 - New Relic Shaka tracker auto-detects events emitted by Shaka Player.
-- Ensure that the **Browser agent** is successfully instrumented before deploying the media tracker.
 - For questions and feedback on this package, please visit the [Explorer's Hub](https://discuss.newrelic.com), New Relic's community support forum.
 - Looking to contribute to the Player Name agent code base? See [DEVELOPING.md](./DEVELOPING.md) for instructions on building and testing the browser agent library, and Contributors.
 
@@ -21,7 +20,7 @@ To integrate New Relic Tracker Agent into your web application effectively, you'
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Relic Tracker Integration</title>
-    <script src="path/to/browser-agent.js"></script>
+
     <!-- snippet code generated  -->
     <script src="path/to/Shaka-tracker.js"></script>
   </head>
@@ -44,19 +43,30 @@ $ yarn add @newrelic/video-shaka
 ```
 
 ## Instantiating the Shaka Tracker
-```javascript
 
-import ShakaTracker from "@newrelic/video-shaka"; 
+```javascript
+import ShakaTracker from '@newrelic/video-shaka';
 
 // Add a ShakaTracker
-  player.version = shaka.Player.version;
-  const tracker = new ShakaTracker(player);
+player.version = shaka.Player.version;
+
+// Get Application info from onboarding steps of new relic, from tiles Place a JavaScript Snippet Code
+const options = {
+  info: {
+    beacon: 'xxxxxxxxxx',
+    applicationID: 'xxxxxxx',
+    licenseKey: 'xxxxxxxxxxx',
+  },
+};
+
+const tracker = new ShakaTracker(player, options);
 
 // For setting userId
 tracker.setUserId('userId');
 
-//For setting custom attributes const tracker
-const tracker = new ShakaTracker(player, {
+// For Sending custom Attributes
+
+tracker.sendOptions({
   customData: {
     contentTitle: 'Override Existing Title',
     customPlayerName: 'myGreatPlayer',
@@ -66,12 +76,13 @@ const tracker = new ShakaTracker(player, {
 
 // For Sending custom Action with Attributes
 
-const tracker = new ShakaTracker(player);
-
 tracker.sendCustom('CUSTOM_ACTION', 'state time', {
   test1: 'value1',
   test2: 'value2',
 });
+
+// For setting different harvest interval (1s to 5 mins)
+tracker.setHarvestInterval(40000); // setting for 40 secs
 ```
 
 ## Data Model

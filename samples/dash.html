@@ -1,11 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
-
     <!-- newrelic tracker -->
-    <script src="../dist/newrelic-video-shaka.min.js"></script>
+    <script src="../dist/umd/newrelic-video-shaka.min.js"></script>
 
     <!-- shaka -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
@@ -40,9 +37,18 @@
           window.player = player;
           await player.load(source);
           // newrelic
-          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+
+          const options = {
+            info: {
+              beacon: 'bam.nr-data.net',
+              licenseKey: 'NRBR-298f449004b949aad61',
+              applicationID: '601579909',
+            },
+          };
+
+          var tracker = new ShakaTracker(player, options);
         } catch (error) {
-          nrvideo.Core.sendError(error);
+          console.error(error.message);
         }
       }
 
