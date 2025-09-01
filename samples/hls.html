@@ -42,10 +42,17 @@
         try {
           window.player = player;
           await player.load(source);
-          // newrelic
-          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          const options = {
+            info: {
+              beacon: 'xxxxxxxxxxx',
+              licenseKey: 'xxxxxxxxxxx',
+              applicationID: 'xxxxxxxxxxxx',
+            },
+          };
+
+          const tracker = new ShakaTracker(player, options);
         } catch (e) {
-          nrvideo.Core.sendError(error);
+          console.error(e.message);
         }
       }
 

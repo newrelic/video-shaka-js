@@ -3,8 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shaka Player MSS Example</title>
-    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
+
     <!-- newrelic tracker -->
     <script src="../dist/newrelic-video-shaka.min.js"></script>
     <!-- shaka -->
@@ -43,9 +42,17 @@
         try {
           await player.load(source);
           // newrelic
-          nrvideo.Core.addTracker(new nrvideo.ShakaTracker(player));
+          const options = {
+            info: {
+              beacon: 'xxxxxxxxxxx',
+              licenseKey: 'xxxxxxxxxxx',
+              applicationID: 'xxxxxxxxxxxx',
+            },
+          };
+
+          const tracker = new ShakaTracker(player, options);
         } catch (error) {
-          nrvideo.Core.sendError(error);
+          console.error(error.message);
         }
       }
 
