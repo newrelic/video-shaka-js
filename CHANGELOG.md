@@ -1,16 +1,18 @@
 # CHANGELOG
 
-## [4.0.0] - 2025-07-28
-
-### Changed
-
-- **Standalone Agent:** This tracker now operates independently with its own authorization details, removing the dependency on a browser agent.
+## [4.0.2] - 2025-11-10
 
 ### Enhancements
 - Improved error logging by mapping Shaka errors to the following attributes: `errorCode`, `errorPlatformCode`, `errorMessage`, `errorStackTrace`, `errorSeverity`.
 
 ### Updates
 - Attached the error `EventListener` to the player instead of its tag, following Shaka's specifications, to fix the `CONTENT_ERROR` event.
+
+## [4.0.0] - 2025-07-28
+
+### Changed
+
+- **Standalone Agent:** This tracker now operates independently with its own authorization details, removing the dependency on a browser agent.
 
 ## [3.1.0] - 2025-05-27
 
