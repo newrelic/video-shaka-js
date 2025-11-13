@@ -1,11 +1,13 @@
 # CHANGELOG
 
-## [4.0.2] - 2025-11-10
+## [4.0.1] - 2025-11-13
 
 ### Enhancements
+
 - Improved error logging by mapping Shaka errors to the following attributes: `errorCode`, `errorPlatformCode`, `errorMessage`, `errorStackTrace`, `errorSeverity`.
 
 ### Updates
+
 - Attached the error `EventListener` to the player instead of its tag, following Shaka's specifications, to fix the `CONTENT_ERROR` event.
 
 ## [4.0.0] - 2025-07-28
