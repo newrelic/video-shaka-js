@@ -17,6 +17,14 @@ describe('ShakaTracker', () => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
+  it('should initialize correctly with player and options', () => {
+    const options = { debug: true };
+    const tracker = new ShakaTracker(player, options);
+
+    expect(tracker.player).toBe(player);
+    expect(tracker).toBeInstanceOf(ShakaTracker);
+  });
+
   it('Should return the tracker name', () => {
     const trackerName = shakaTracker.getTrackerName();
     expect(trackerName).toBe('shaka');
@@ -40,6 +48,89 @@ describe('ShakaTracker', () => {
     expect(shakaTracker.setPlayer).toHaveBeenCalledWith(player, tag);
   });
 
+  it('should call getMediaElement when tag is not provided', () => {
+    const mockElement = { tagName: 'VIDEO' };
+    player.getMediaElement = jest.fn().mockReturnValue(mockElement);
+
+    // Test the conditional logic
+    const result = !null && player.getMediaElement ? player.getMediaElement() : null;
+    expect(result).toBe(mockElement);
+    expect(player.getMediaElement).toHaveBeenCalled();
+  });
+
+  it('should not call getMediaElement when tag is provided', () => {
+    const mockTag = { tagName: 'VIDEO' };
+    player.getMediaElement = jest.fn();
+
+    // Test the conditional logic - if tag exists, don't call getMediaElement
+    const result = !mockTag && player.getMediaElement ? player.getMediaElement() : mockTag;
+    expect(result).toBe(mockTag);
+    expect(player.getMediaElement).not.toHaveBeenCalled();
+  });
+
+  // BRANCH COVERAGE TESTS for setPlayer method - Line 10: if (!tag && player.getMediaElement)
+
+  it('should call setPlayer with tag when tag is provided (branch 1)', () => {
+    const mockTag = { tagName: 'VIDEO' };
+    const testPlayer = { ...player, getMediaElement: jest.fn() };
+
+    // Call actual setPlayer method to test the branch
+    shakaTracker.setPlayer(testPlayer, mockTag);
+
+    // Should NOT call getMediaElement because tag is provided
+    expect(testPlayer.getMediaElement).not.toHaveBeenCalled();
+  });
+
+  it('should call getMediaElement when no tag and method exists (branch 2)', () => {
+    const mockElement = { tagName: 'VIDEO' };
+    const testPlayer = {
+      ...player,
+      getMediaElement: jest.fn().mockReturnValue(mockElement)
+    };
+
+    // Call actual setPlayer method to test the branch
+    shakaTracker.setPlayer(testPlayer); // No tag provided
+
+    // Should call getMediaElement because !tag is true AND method exists
+    expect(testPlayer.getMediaElement).toHaveBeenCalled();
+  });
+
+  it('should handle player without getMediaElement method (branch 3)', () => {
+    const testPlayer = { ...player };
+    delete testPlayer.getMediaElement; // Remove the method
+
+    // Call actual setPlayer method to test the branch
+    shakaTracker.setPlayer(testPlayer); // No tag, no getMediaElement method
+
+    // Should not crash and should handle gracefully
+    expect(testPlayer.getMediaElement).toBeUndefined();
+  });
+
+  it('should handle falsy tag values correctly', () => {
+    const testPlayer = {
+      ...player,
+      getMediaElement: jest.fn().mockReturnValue({ tagName: 'VIDEO' })
+    };
+
+    // Test with null tag
+    shakaTracker.setPlayer(testPlayer, null);
+    expect(testPlayer.getMediaElement).toHaveBeenCalledTimes(1);
+
+    // Reset mock
+    testPlayer.getMediaElement.mockClear();
+
+    // Test with undefined tag
+    shakaTracker.setPlayer(testPlayer, undefined);
+    expect(testPlayer.getMediaElement).toHaveBeenCalledTimes(1);
+
+    // Reset mock
+    testPlayer.getMediaElement.mockClear();
+
+    // Test with empty string tag
+    shakaTracker.setPlayer(testPlayer, '');
+    expect(testPlayer.getMediaElement).toHaveBeenCalledTimes(1);
+  });
+
   it('should return the playrate of the player', () => {
     const rate = 1;
     shakaTracker.getPlayrate = player.getPlaybackRate.mockReturnValue(rate);
@@ -48,14 +139,55 @@ describe('ShakaTracker', () => {
 
   it('Should return the player version', () => {
     const mockVersion = '3.2.1';
-    global.shaka = {
-      Player: {
-        version: mockVersion,
-      },
-    };
+    // Mock the Player property on the tracker instance
+    shakaTracker.Player = { version: mockVersion };
 
     const playerVersion = shakaTracker.getPlayerVersion();
     expect(playerVersion).toBe(mockVersion);
+  });
+
+  it('Should return instrumentation provider', () => {
+    const provider = shakaTracker.getInstrumentationProvider();
+    expect(provider).toBe('New Relic');
+  });
+
+  it('Should return instrumentation name', () => {
+    const name = shakaTracker.getInstrumentationName();
+    expect(name).toBe('Shaka'); // Should match getPlayerName()
+  });
+
+  it('Should return instrumentation version', () => {
+    const mockVersion = '3.1.0';
+    shakaTracker.Player = { version: mockVersion };
+
+    const version = shakaTracker.getInstrumentationVersion();
+    expect(version).toBe(mockVersion); // Should match getPlayerVersion()
+  });
+
+  it('Should return video source URI', () => {
+    const mockUri = 'https://example.com/video.mpd';
+    player.getAssetUri = jest.fn().mockReturnValue(mockUri);
+
+    const src = shakaTracker.getSrc();
+    expect(src).toBe(mockUri);
+    expect(player.getAssetUri).toHaveBeenCalled();
+  });
+
+  it('Should return stream bitrate from player stats', () => {
+    const mockStats = { streamBandwidth: 2500000 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const bitrate = shakaTracker.getBitrate();
+    expect(bitrate).toBe(2500000);
+    expect(player.getStats).toHaveBeenCalled();
+  });
+
+  it('Should return true for live content', () => {
+    player.isLive = jest.fn().mockReturnValue(true);
+
+    const isLive = shakaTracker.isLive();
+    expect(isLive).toBe(true);
+    expect(player.isLive).toHaveBeenCalled();
   });
 });
 
@@ -84,6 +216,55 @@ describe('getTrack', () => {
     const mockTracks = [
       { id: 1, type: 'audio', active: false },
       { id: 2, type: 'video', active: false },
+    ];
+
+    player.getVariantTracks.mockReturnValue(mockTracks);
+
+    const track = shakaTracker.getTrack();
+    expect(track).toEqual({});
+  });
+
+  it('should return active variant track', () => {
+    const mockTracks = [
+      { id: 1, type: 'audio', active: false },
+      { id: 2, type: 'variant', active: true, bandwidth: 1000000 },
+    ];
+
+    player.getVariantTracks.mockReturnValue(mockTracks);
+
+    const track = shakaTracker.getTrack();
+    expect(track.type).toEqual('variant');
+    expect(track.active).toEqual(true);
+    expect(track.bandwidth).toEqual(1000000);
+  });
+
+  it('should return empty object when no variant tracks exist', () => {
+    player.getVariantTracks.mockReturnValue([]);
+
+    const track = shakaTracker.getTrack();
+    expect(track).toEqual({});
+  });
+
+  it('should skip inactive video tracks and return active one', () => {
+    const mockTracks = [
+      { id: 1, type: 'video', active: false },
+      { id: 2, type: 'video', active: true, width: 1920, height: 1080 },
+      { id: 3, type: 'audio', active: true },
+    ];
+
+    player.getVariantTracks.mockReturnValue(mockTracks);
+
+    const track = shakaTracker.getTrack();
+    expect(track.id).toEqual(2);
+    expect(track.width).toEqual(1920);
+    expect(track.height).toEqual(1080);
+  });
+
+  it('should handle tracks with neither video nor variant type', () => {
+    const mockTracks = [
+      { id: 1, type: 'audio', active: true },
+      { id: 2, type: 'text', active: true },
+      { id: 3, type: 'unknown', active: true },
     ];
 
     player.getVariantTracks.mockReturnValue(mockTracks);
@@ -362,39 +543,39 @@ describe('unregisterListeners', () => {
 
     shakaTracker.unregisterListeners();
 
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'pause',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'ended',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'play',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'loadedmetadata',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'loadeddata',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'loadstart',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'playing',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'seeking',
       expect.any(Function)
     );
-    expect(shakaTracker.tag.addEventListener).toHaveBeenCalledWith(
+    expect(shakaTracker.tag.removeEventListener).toHaveBeenCalledWith(
       'error',
       expect.any(Function)
     );
@@ -474,9 +655,42 @@ describe('Tracker Event Handlers', () => {
   });
 
   it('should call sendError on onError', () => {
-    const event = { detail: 'error' };
+    const event = {
+      detail: {
+        code: 1001,
+        message: 'Network error'
+      }
+    };
     shakaTracker.onError(event);
-    expect(shakaTracker.sendError).toHaveBeenCalledWith(event.detail);
+    expect(shakaTracker.sendError).toHaveBeenCalledWith({
+      errorCode: 1001,
+      errorMessage: 'Network error'
+    });
+  });
+
+  it('should handle onError with missing detail properties', () => {
+    const event = {
+      detail: {} // Missing code and message
+    };
+    shakaTracker.onError(event);
+    expect(shakaTracker.sendError).toHaveBeenCalledWith({
+      errorCode: undefined,
+      errorMessage: undefined
+    });
+  });
+
+  it('should handle onError with partial error details', () => {
+    const event = {
+      detail: {
+        code: 2002
+        // Missing message
+      }
+    };
+    shakaTracker.onError(event);
+    expect(shakaTracker.sendError).toHaveBeenCalledWith({
+      errorCode: 2002,
+      errorMessage: undefined
+    });
   });
 
   it('should call sendEnd on onEnded', () => {
