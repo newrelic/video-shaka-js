@@ -19,8 +19,7 @@ describe('ShakaToNewRelicMapper', () => {
         errorPlatformCode: 'PLATFORM_ERROR',
         errorMessage: 'An error occurred',
         errorStackTrace: 'Error stack trace',
-        errorSeverity: 'CRITICAL',
-        extraAttribute: 'extraValue'
+        errorSeverity: 'CRITICAL'
       });
     });
 
