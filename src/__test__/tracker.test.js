@@ -8,6 +8,8 @@ const player = {
   getVariantTracks: jest.fn(),
   getAssetUri: jest.fn(),
   isLive: jest.fn(),
+  getStats: jest.fn(),
+  getMediaElement: jest.fn(),
 };
 
 describe('ShakaTracker', () => {
@@ -48,14 +50,61 @@ describe('ShakaTracker', () => {
 
   it('Should return the player version', () => {
     const mockVersion = '3.2.1';
-    global.shaka = {
-      Player: {
-        version: mockVersion,
-      },
+    shakaTracker.Player = {
+      version: mockVersion,
     };
 
     const playerVersion = shakaTracker.getPlayerVersion();
     expect(playerVersion).toBe(mockVersion);
+  });
+
+  it('Should return undefined when Player is not set', () => {
+    shakaTracker.Player = undefined;
+    const playerVersion = shakaTracker.getPlayerVersion();
+    expect(playerVersion).toBe(undefined);
+  });
+
+  it('Should get bitrate from player stats', () => {
+    const mockBandwidth = 1000000;
+    player.getStats.mockReturnValue({ streamBandwidth: mockBandwidth });
+    expect(shakaTracker.getBitrate()).toBe(mockBandwidth);
+  });
+
+  it('Should get instrumentation methods', () => {
+    expect(shakaTracker.getInstrumentationProvider()).toBe('New Relic');
+    expect(shakaTracker.getInstrumentationName()).toBe(shakaTracker.getPlayerName());
+    expect(shakaTracker.getInstrumentationVersion()).toBe(shakaTracker.getPlayerVersion());
+  });
+
+  // setPlayer tests - will fail until video-core publishes setPlayer method
+  it('should call setPlayer with tag when tag is provided', () => {
+    const mockTag = { tagName: 'VIDEO' };
+    shakaTracker.setPlayer(player, mockTag);
+    // Test verifies setPlayer method exists and can be called
+    // Will pass once video-core publishes setPlayer method in mock
+  });
+
+  it('should call getMediaElement when no tag and method exists', () => {
+    const mockElement = { tagName: 'VIDEO' };
+    player.getMediaElement.mockReturnValue(mockElement);
+    shakaTracker.setPlayer(player);
+    expect(player.getMediaElement).toHaveBeenCalled();
+    // Will pass once video-core publishes setPlayer method in mock
+  });
+
+  it('should handle player without getMediaElement method', () => {
+    const playerWithoutMethod = { ...player };
+    delete playerWithoutMethod.getMediaElement;
+    shakaTracker.setPlayer(playerWithoutMethod);
+    // Test verifies setPlayer handles missing getMediaElement
+    // Will pass once video-core publishes setPlayer method in mock
+  });
+
+  it('should handle falsy tag values correctly', () => {
+    player.getMediaElement.mockReturnValue({ tagName: 'VIDEO' });
+    shakaTracker.setPlayer(player, null);
+    expect(player.getMediaElement).toHaveBeenCalled();
+    // Will pass once video-core publishes setPlayer method in mock
   });
 });
 
