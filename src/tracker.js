@@ -66,7 +66,28 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   getBitrate() {
-    return this.player.getStats().streamBandwidth;
+    return this.getContentBitratePlayback();
+  }
+
+  // Measures: Actual content consumption rate during playback
+  // Returns the player's bandwidth estimate (not manifest bitrate)
+  getContentBitratePlayback() {
+    try {
+      const stats = this.player.getStats();
+      if (stats) {
+        // estimatedBandwidth: Shaka's measured network bandwidth
+        // This reflects actual delivery capacity, not manifest target
+        if (stats.estimatedBandwidth && stats.estimatedBandwidth > 0) {
+          return stats.estimatedBandwidth;
+        }
+
+        // Fallback to streamBandwidth (manifest bitrate of current variant)
+        if (stats.streamBandwidth && stats.streamBandwidth > 0) {
+          return stats.streamBandwidth;
+        }
+      }
+    } catch (err) {}
+    return null;
   }
 
   getRenditionName() {
