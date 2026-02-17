@@ -1,11 +1,13 @@
-name: Build and Publish
+name: Publish Release
 
 on:
   pull_request:
     types:
     - closed
     branches:
-    - stable
+    - master
+  workflow_dispatch:
+
 
 permissions:
   contents: write
@@ -13,7 +15,10 @@ permissions:
 
 jobs:
   build-and-publish:
-    if: github.event.pull_request.merged == true
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       startsWith(github.event.pull_request.head.ref, 'release/'))
     uses: newrelic/video-core-js/.github/workflows/npm-publish.yml@stable
     with:
       s3-path: 'media-agents/browser/shaka'

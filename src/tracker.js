@@ -78,14 +78,12 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
         // streamBandwidth: Actual content bitrate of the current variant (from manifest)
         // This is the definitive contentBitrate as per Shaka's API definition
         // See: https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html
-        if (stats.streamBandwidth && stats.streamBandwidth > 0) {
-          return stats.streamBandwidth;
-        }
 
         // estimatedBandwidth: Shaka's measured network bandwidth estimate
         // This reflects overall network capacity, not the specific stream bitrate
-        if (stats.estimatedBandwidth && stats.estimatedBandwidth > 0) {
-          return stats.estimatedBandwidth;
+
+        if (stats.streamBandwidth && stats.streamBandwidth > 0) {
+          return stats.streamBandwidth;
         }
       }
     } catch (err) {}
