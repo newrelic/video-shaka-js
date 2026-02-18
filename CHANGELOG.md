@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## [4.0.1] - 2026-02-18
+
+### Fixed
+
+- **Content Bitrate Reporting:** Fixed `contentBitrate` to accurately report the actual bitrate of the currently playing video stream by using `streamBandwidth`
+
 ## [4.0.0] - 2025-07-28
 
 ### Changed

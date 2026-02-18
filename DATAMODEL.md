@@ -43,7 +43,7 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | contentId                | The ID of the video.                                                                                                                               |
 | contentTitle             | The title of the video.                                                                                                                            |
 | contentIsLive            | True if the video is live.                                                                                                                         |
-| contentBitrate           | Actual bitrate (in bits per second) of the currently playing video stream from the manifest (uses streamBandwidth from Shaka Player stats).        |
+| contentBitrate           | The actual bitrate (in bits per second) of the currently playing video variant, derived from streamBandwidth in the Shaka Player statistics.       |
 | contentRenditionName     | Name of the rendition (e.g., 1080p).                                                                                                               |
 | contentRenditionBitrate  | Target Bitrate of the rendition.                                                                                                                   |
 | contentRenditionHeight   | Rendition actual Height (before re-scaling).                                                                                                       |
