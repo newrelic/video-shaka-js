@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shaka HLS Player</title>
-    <!-- newrelic browser agent. REMEMBER TO REPLACE THIS SCRIPT WITH YOUR OWN BROWSER AGENT -->
-    <script type="text/javascript" src="agent.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/shaka-player@5.0.4/dist/controls.min.css" rel="stylesheet">
 
     <!-- newrelic tracker -->
     <script src="../dist/umd/newrelic-video-shaka.min.js"></script>
 
     <!-- shaka -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.11.2/shaka-player.compiled.debug.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/shaka-player@5.0.4/dist/shaka-player.compiled.min.js"></script>
+
   </head>
   <body>
     <video
@@ -23,20 +23,18 @@
     ></video>
     <script>
       async function initPlayer() {
-        // Install polyfills.
-        shaka.polyfill.installAll();
-
         // Find the video element.
         var video = document.getElementById('myPlayer');
 
-        // Construct a Player to wrap around it.
-        var player = new shaka.Player(video);
+        // Construct a Player and attach the video element.
+        var player = new shaka.Player();
+        await player.attach(video);
 
         // Attach the player to the window so that it can be easily debugged.
         // window.player = player
 
         // // source
-        var source = 'http://content.jwplatform.com/manifests/vM7nH0Kl.m3u8';
+        var source = 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8';
 
         // Load the source into the Player.
         try {
@@ -44,15 +42,15 @@
           await player.load(source);
           const options = {
             info: {
-              beacon: 'xxxxxxxxxxxx',
+              beacon: 'xxxxxxxxxxx',
+              licenseKey: 'xxxxxxxxxxx',
               applicationID: 'xxxxxxxxxxxx',
-              licenseKey: 'xxxxxxxxxxxx',
             },
           };
 
-          // Initialize your player with new relic Tracker to send data
-
           const tracker = new ShakaTracker(player, options);
+
+
         } catch (e) {
           console.error(e.message);
         }
