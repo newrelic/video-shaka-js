@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [4.1.0] - 2026-03-09
+
+### Added
+
+- **New Bitrate Metrics:** Introduced three new bitrate attributes for granular playback observability:
+  - `contentManifestBitrate` — Total variant bitrate (video + audio) as declared in the manifest, derived from `stats.streamBandwidth` (Indicated Bitrate).
+  - `contentMeasuredBitrate` — Estimated network bandwidth measured by Shaka's ABR algorithm, derived from `stats.estimatedBandwidth` (Observed Bitrate).
+  - `contentDownloadBitrate` — Effective download throughput in bits per second, calculated as `(bytesDownloaded × 8) / playTime`.
+
+- **QoE (Quality of Experience) Support:** Added support for QoE aggregate events via `video-core`. The following KPIs are now tracked automatically when `qoeAggregate` is enabled in the config:
+  - `startupTime` — Time from content request to content start (ms).
+  - `peakBitrate` — Maximum `contentBitrate` observed during playback.
+  - `averageBitrate` — Weighted average bitrate across playback.
+  - `hadStartupFailure` — `true` if a content error occurred before content started.
+  - `hadPlaybackFailure` — `true` if a content error occurred during playback.
+  - `totalRebufferingTime` — Total time spent rebuffering (ms).
+  - `rebufferingRatio` — Rebuffering time as a percentage of total playtime.
+  - `totalPlaytime` — Total content playtime (ms).
+  - `numberOfErrors` — Total number of errors during the session.
+
+### Changed
+
+- **`contentBitrate`:** Updated to use `track.videoBandwidth` (video-only bitrate), differentiating it from manifest and rendition bitrates which report combined video + audio bandwidth.
+- **Shaka 5.x Compatibility:** Tracker is now compatible with both Shaka Player 4.x and 5.x:
+  - `getPlayerVersion()` resolves version from `this.player.constructor.version` (4.x) with fallback to `shaka.Player.version` (5.x).
+  - `onError()` handles both Shaka player errors (`e.detail`) and HTML video element errors (`e.target.error`).
+  - Sample files updated: removed deprecated `shaka.polyfill.installAll()`, updated player instantiation to `new shaka.Player()` + `await player.attach(video)`.
+
+### Updated
+
+- **DATAMODEL.md:** Updated bitrate attribute definitions with precise sources and descriptions.
+- **samples/hls.html:** Updated to use Shaka Player 5.0.4 with v5-compatible initialization.
+
 ## [4.0.1] - 2026-02-18
 
 ### Fixed

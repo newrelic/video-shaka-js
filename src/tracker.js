@@ -69,22 +69,41 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.getContentBitratePlayback();
   }
 
-  // Measures: Actual content consumption rate during playback
-  // Returns the current stream's bitrate
+  // Returns the video-only bandwidth from the active track
   getContentBitratePlayback() {
+    return this.getTrack().videoBandwidth || null;
+  }
+
+  // Measures: Bitrate advertised by the server in the manifest for the active variant
+  // Maps to Indicated Bitrate
+  getManifestBitrate() {
     try {
       const stats = this.player.getStats();
-      if (stats) {
-        // streamBandwidth: Actual content bitrate of the current variant (from manifest)
-        // This is the definitive contentBitrate as per Shaka's API definition
-        // See: https://shaka-player-demo.appspot.com/docs/api/shaka.extern.html
+      if (stats && stats.streamBandwidth && stats.streamBandwidth > 0) {
+        return stats.streamBandwidth;
+      }
+    } catch (err) {}
+    return null;
+  }
 
-        // estimatedBandwidth: Shaka's measured network bandwidth estimate
-        // This reflects overall network capacity, not the specific stream bitrate
+  // Measures: Actual empirical throughput measured across all downloaded media
+  // Maps to Observed Bitrate
+  getMeasuredBitrate() {
+    try {
+      const stats = this.player.getStats();
+      if (stats && stats.estimatedBandwidth && stats.estimatedBandwidth > 0) {
+        return stats.estimatedBandwidth;
+      }
+    } catch (err) {}
+    return null;
+  }
 
-        if (stats.streamBandwidth && stats.streamBandwidth > 0) {
-          return stats.streamBandwidth;
-        }
+  // Measures: Effective download throughput in bits per second
+  getDownloadBitrate() {
+    try {
+      const stats = this.player.getStats();
+      if (stats && stats.bytesDownloaded > 0 && stats.playTime > 0) {
+        return (stats.bytesDownloaded * 8) / stats.playTime;
       }
     } catch (err) {}
     return null;
@@ -107,7 +126,17 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   getPlayerVersion() {
-    return this.Player?.version;
+    try {
+      // Shaka 4.x: version on shaka.Player.version (static)
+      if (this.player?.constructor?.version) {
+        return this.player.constructor.version;
+      }
+      // Shaka 5.x: version may be on the prototype or global
+      if (typeof shaka !== 'undefined' && shaka.Player?.version) {
+        return shaka.Player.version;
+      }
+    } catch (err) {}
+    return null;
   }
 
   registerListeners() {
@@ -207,7 +236,9 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onError(e) {
-    const error = e.detail;
+    // HTML video element errors use e.target.error
+    // Shaka player errors use e.detail
+    const error = e.detail || e.target?.error || {};
     const errorCode = error.code;
     const errorMessage = error.message;
     this.sendError({ errorCode, errorMessage });

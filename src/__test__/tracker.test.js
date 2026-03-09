@@ -265,7 +265,7 @@ describe('getBitrate', () => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it('should return the bitrate of the player', () => {
+  it('should return streamBandwidth from player stats', () => {
     const mockStats = {
       streamBandwidth: 5000000,
     };
@@ -273,6 +273,128 @@ describe('getBitrate', () => {
 
     const bitrate = shakaTracker.getBitrate();
     expect(bitrate).toBe(mockStats.streamBandwidth);
+  });
+});
+
+describe('getManifestBitrate', () => {
+  let shakaTracker;
+
+  beforeEach(() => {
+    shakaTracker = new ShakaTracker(player, {});
+  });
+
+  it('should return streamBandwidth from stats', () => {
+    const mockStats = { streamBandwidth: 3000000 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getManifestBitrate();
+    expect(result).toBe(3000000);
+  });
+
+  it('should return null when streamBandwidth is 0', () => {
+    const mockStats = { streamBandwidth: 0 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getManifestBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when stats are unavailable', () => {
+    player.getStats = jest.fn().mockReturnValue(null);
+
+    const result = shakaTracker.getManifestBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when getStats throws', () => {
+    player.getStats = jest.fn().mockImplementation(() => { throw new Error('fail'); });
+
+    const result = shakaTracker.getManifestBitrate();
+    expect(result).toBeNull();
+  });
+});
+
+describe('getMeasuredBitrate', () => {
+  let shakaTracker;
+
+  beforeEach(() => {
+    shakaTracker = new ShakaTracker(player, {});
+  });
+
+  it('should return estimatedBandwidth from stats', () => {
+    const mockStats = { estimatedBandwidth: 8000000 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getMeasuredBitrate();
+    expect(result).toBe(8000000);
+  });
+
+  it('should return null when estimatedBandwidth is 0', () => {
+    const mockStats = { estimatedBandwidth: 0 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getMeasuredBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when stats are unavailable', () => {
+    player.getStats = jest.fn().mockReturnValue(null);
+
+    const result = shakaTracker.getMeasuredBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when getStats throws', () => {
+    player.getStats = jest.fn().mockImplementation(() => { throw new Error('fail'); });
+
+    const result = shakaTracker.getMeasuredBitrate();
+    expect(result).toBeNull();
+  });
+});
+
+describe('getDownloadBitrate', () => {
+  let shakaTracker;
+
+  beforeEach(() => {
+    shakaTracker = new ShakaTracker(player, {});
+  });
+
+  it('should return calculated download bitrate from bytesDownloaded and playTime', () => {
+    const mockStats = { bytesDownloaded: 1000000, playTime: 8 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getDownloadBitrate();
+    expect(result).toBe((1000000 * 8) / 8);
+  });
+
+  it('should return null when bytesDownloaded is 0', () => {
+    const mockStats = { bytesDownloaded: 0, playTime: 10 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getDownloadBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when playTime is 0', () => {
+    const mockStats = { bytesDownloaded: 500000, playTime: 0 };
+    player.getStats = jest.fn().mockReturnValue(mockStats);
+
+    const result = shakaTracker.getDownloadBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when stats are unavailable', () => {
+    player.getStats = jest.fn().mockReturnValue(null);
+
+    const result = shakaTracker.getDownloadBitrate();
+    expect(result).toBeNull();
+  });
+
+  it('should return null when getStats throws', () => {
+    player.getStats = jest.fn().mockImplementation(() => { throw new Error('fail'); });
+
+    const result = shakaTracker.getDownloadBitrate();
+    expect(result).toBeNull();
   });
 });
 

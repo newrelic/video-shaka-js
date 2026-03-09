@@ -43,9 +43,12 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | contentId                | The ID of the video.                                                                                                                               |
 | contentTitle             | The title of the video.                                                                                                                            |
 | contentIsLive            | True if the video is live.                                                                                                                         |
-| contentBitrate           | The actual bitrate (in bits per second) of the currently playing video variant, derived from streamBandwidth in the Shaka Player statistics.       |
+| contentBitrate           | The video-only bitrate (in bits per second) of the currently playing variant, derived from `videoBandwidth` of the active track. Excludes audio bandwidth. |
+| contentManifestBitrate   | The total variant bitrate (video + audio combined), in bits per second, as declared in the manifest, derived from `streamBandwidth` in Shaka Player statistics (Indicated Bitrate). |
+| contentMeasuredBitrate   | The estimated network bandwidth in bits per second, as measured by Shaka Player's ABR algorithm, derived from `estimatedBandwidth` in Shaka Player statistics (Observed Bitrate). |
+| contentDownloadBitrate   | The effective download throughput in bits per second, calculated as `(bytesDownloaded × 8) / playTime` from Shaka Player statistics.                |
 | contentRenditionName     | Name of the rendition (e.g., 1080p).                                                                                                               |
-| contentRenditionBitrate  | Target Bitrate of the rendition.                                                                                                                   |
+| contentRenditionBitrate  | Total variant bandwidth (video + audio combined) of the active rendition, in bits per second, derived from `bandwidth` of the active track.         |
 | contentRenditionHeight   | Rendition actual Height (before re-scaling).                                                                                                       |
 | contentRenditionWidth    | Rendition actual Width (before re-scaling).                                                                                                        |
 | contentDuration          | Duration of the video, in ms.                                                                                                                      |

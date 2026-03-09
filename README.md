@@ -85,6 +85,49 @@ tracker.sendCustom('CUSTOM_ACTION', 'state time', {
 tracker.setHarvestInterval(40000); // setting for 40 secs
 ```
 
+## Enabling QoE (Quality of Experience)
+
+QoE aggregate events provide key performance indicators (KPIs) that help monitor video playback quality. To enable QoE, pass `qoeAggregate: true` in the `config` section of the options:
+
+```javascript
+const options = {
+  info: {
+    beacon: 'xxxxxxxxxx',
+    applicationID: 'xxxxxxx',
+    licenseKey: 'xxxxxxxxxxx',
+  },
+  config: {
+    qoeAggregate: true,        // Enable QoE event aggregation
+    qoeIntervalFactor: 2,      // Optional: Include QoE aggregate events once every N harvest cycles (default: 1)
+  },
+};
+
+const tracker = new ShakaTracker(player, options);
+```
+
+### Configuration Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `qoeAggregate` | boolean | `false` | Controls whether QoE events are aggregated and sent to New Relic. Set to `true` to enable. |
+| `qoeIntervalFactor` | number | `1` | Controls how frequently QoE aggregate events are included in harvest cycles. A value of `N` includes them once every N cycles. Must be a positive integer. QoE events are always included on the first and final harvest cycles regardless of this setting. |
+
+### QoE KPIs
+
+When QoE is enabled, the following KPIs are automatically tracked and sent as part of `QOE_AGGREGATE` events:
+
+| KPI | Description |
+|---|---|
+| `startupTime` | Time from content request to content start, in milliseconds. |
+| `peakBitrate` | Maximum `contentBitrate` observed during playback. |
+| `averageBitrate` | Weighted average bitrate across the playback session. |
+| `hadStartupFailure` | `true` if a content error occurred before content started. |
+| `hadPlaybackFailure` | `true` if a content error occurred during playback. |
+| `totalRebufferingTime` | Total time spent rebuffering, in milliseconds. |
+| `rebufferingRatio` | Rebuffering time as a percentage of total playtime. |
+| `totalPlaytime` | Total content playtime, in milliseconds. |
+| `numberOfErrors` | Total number of errors during the session. |
+
 ## Data Model
 
 To understand which actions and attributes are captured and emitted by the Shaka Player under different event types, see [DataModel.md](./DATAMODEL.md).
