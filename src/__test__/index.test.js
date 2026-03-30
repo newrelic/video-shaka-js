@@ -1,14 +1,9 @@
-import nrvideo from '@newrelic/video-core'
-import Tracker from "../tracker";
+import ShakaTracker from "../tracker";
 
 const exportedModule = require("../index");
 
-describe("nrvideo ShakaTracker Assignment", () => {
-  it("should assign Tracker to nrvideo.ShakaTracker", () => {
-    expect(nrvideo.ShakaTracker).toBe(Tracker);
-  });
-
-  it("should export the modified nrvideo object", () => {
-    expect(exportedModule).toBe(nrvideo);
+describe("ShakaTracker Module Export", () => {
+  it("should export ShakaTracker as default", () => {
+    expect(exportedModule.default).toBe(ShakaTracker);
   });
 });

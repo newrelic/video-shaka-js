@@ -265,14 +265,12 @@ describe('getBitrate', () => {
     shakaTracker = new ShakaTracker(player, {});
   });
 
-  it('should return streamBandwidth from player stats', () => {
-    const mockStats = {
-      streamBandwidth: 5000000,
-    };
-    player.getStats = jest.fn().mockReturnValue(mockStats);
+  it('should return videoBandwidth from active track', () => {
+    const mockTracks = [{ active: true, type: 'variant', videoBandwidth: 5000000 }];
+    player.getVariantTracks = jest.fn().mockReturnValue(mockTracks);
 
     const bitrate = shakaTracker.getBitrate();
-    expect(bitrate).toBe(mockStats.streamBandwidth);
+    expect(bitrate).toBe(mockTracks[0].videoBandwidth);
   });
 });
 
@@ -596,9 +594,9 @@ describe('Tracker Event Handlers', () => {
   });
 
   it('should call sendError on onError', () => {
-    const event = { detail: 'error' };
+    const event = { detail: { code: 1001, message: 'Network error' } };
     shakaTracker.onError(event);
-    expect(shakaTracker.sendError).toHaveBeenCalledWith(event.detail);
+    expect(shakaTracker.sendError).toHaveBeenCalledWith({ errorCode: 1001, errorMessage: 'Network error' });
   });
 
   it('should call sendEnd on onEnded', () => {
