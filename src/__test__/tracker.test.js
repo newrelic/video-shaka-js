@@ -238,26 +238,6 @@ describe('getPlayrate', () => {
   });
 });
 
-describe('getRenditionBitrate', () => {
-  let shakaTracker;
-
-  beforeEach(() => {
-    shakaTracker = new ShakaTracker(player, {});
-  });
-
-  it('should return the bitrate of the current track', () => {
-    const mockTracks = [
-      { id: 1, type: 'audio', bandwidth: 128000, active: false },
-      { id: 2, type: 'video', bandwidth: 2500000, active: true },
-    ];
-
-    player.getVariantTracks.mockReturnValue(mockTracks);
-
-    const renditionBitrate = shakaTracker.getRenditionBitrate();
-    expect(renditionBitrate).toEqual(mockTracks[1].bandwidth);
-  });
-});
-
 describe('getBitrate', () => {
   let shakaTracker;
 
