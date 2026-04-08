@@ -69,15 +69,10 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.getContentBitratePlayback();
   }
 
-  // Returns the video-only bandwidth from the active track
+  // Measures: Actual content consumption rate during playback
   getContentBitratePlayback() {
-    return this.getTrack().videoBandwidth || null;
-  }
-
-  // Measures: Bitrate advertised by the server in the manifest for the active variant
-  // Maps to Indicated Bitrate
-  getManifestBitrate() {
     try {
+      // Get the current variant's bitrate from manifest (streamBandwidth)
       const stats = this.player.getStats();
       if (stats && stats.streamBandwidth && stats.streamBandwidth > 0) {
         return stats.streamBandwidth;
@@ -86,24 +81,45 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return null;
   }
 
-  // Measures: Actual empirical throughput measured across all downloaded media
-  // Maps to Observed Bitrate
-  getMeasuredBitrate() {
+  // Measures: Highest available bitrate from all variants in the manifest
+  getManifestBitrate() {
     try {
+      // Return highest available bitrate from all variants
+      const tracks = this.player.getVariantTracks();
+      if (tracks && tracks.length > 0) {
+        return Math.max(...tracks.map((t) => t.bandwidth));
+      }
+    } catch (err) {}
+    return null;
+  }
+
+  // Measures: Segment download bitrate (estimated bandwidth)
+  getSegmentDownloadBitrate() {
+    try {
+      // Use estimatedBandwidth for measured bitrate
       const stats = this.player.getStats();
-      if (stats && stats.estimatedBandwidth && stats.estimatedBandwidth > 0) {
+      if (stats && stats.estimatedBandwidth > 0) {
         return stats.estimatedBandwidth;
       }
     } catch (err) {}
     return null;
   }
 
-  // Measures: Effective download throughput in bits per second
-  getDownloadBitrate() {
+  // Measures: Network download bitrate (calculated throughput from bytes and time)
+  getNetworkDownloadBitrate() {
     try {
       const stats = this.player.getStats();
-      if (stats && stats.bytesDownloaded > 0 && stats.playTime > 0) {
-        return (stats.bytesDownloaded * 8) / stats.playTime;
+
+      // Calculate throughput manually: (bytesDownloaded * 8) / totalTime
+      if (stats && stats.bytesDownloaded > 0) {
+        // Use total elapsed time (playTime + pauseTime + bufferingTime)
+        const totalTime = (stats.playTime || 0) + (stats.pauseTime || 0) + (stats.bufferingTime || 0);
+
+        if (totalTime > 0) {
+          // Convert bytes to bits (multiply by 8) and divide by time to get bits per second
+          const throughput = (stats.bytesDownloaded * 8) / totalTime;
+          return Math.round(throughput);
+        }
       }
     } catch (err) {}
     return null;
@@ -111,10 +127,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
 
   getRenditionName() {
     return this.getTrack().label;
-  }
-
-  getRenditionBitrate() {
-    return this.getTrack().bandwidth;
   }
 
   getRenditionWidth() {
