@@ -95,10 +95,7 @@ For quick integration without a build system, include the tracker directly in yo
 **Setup Steps:**
 
 1. **Get Configuration** - Visit [one.newrelic.com](https://one.newrelic.com) and complete the video agent onboarding to obtain your credentials (`licenseKey`, `beacon`, `applicationId`)
-2. **Download Tracker** - Get `newrelic-video-shaka.min.js` from:
-   - [GitHub Releases](https://github.com/newrelic/video-shaka-js/releases) (recommended)
-   - Build from source: `npm run build` → `dist/umd/newrelic-video-shaka.min.js`
-3. **Integrate** - Include the script in your HTML and initialize with your configuration
+2. **Integrate** - Include the script in your HTML and initialize with your configuration
 
 ## Usage
 
