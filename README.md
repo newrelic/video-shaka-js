@@ -94,7 +94,7 @@ For quick integration without a build system, include the tracker directly in yo
 
 **Setup Steps:**
 
-1. **Get Configuration** - Visit [one.newrelic.com](https://one.newrelic.com) and complete the video agent onboarding to obtain your credentials (`licenseKey`, `beacon`, `applicationId`)
+1. **Get Configuration** - Visit [one.newrelic.com](https://one.newrelic.com) and follow the Streaming Video & Ads onboarding flow to get your `licenseKey`, `beacon`, `applicationID`, and integration code snippet.
 2. **Integrate** - Include the script in your HTML and initialize with your configuration
 
 ## Usage
