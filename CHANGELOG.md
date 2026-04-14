@@ -1,5 +1,34 @@
 # CHANGELOG
 
+## [4.1.1] - 2026-04-08
+
+### Changed
+
+- **`getNetworkDownloadBitrate()`:** Updated to calculate throughput manually using `(bytesDownloaded × 8) / totalTime` where `totalTime` includes `playTime + pauseTime + bufferingTime`. This provides more accurate network download bitrate measurements based on actual data transfer across the entire session duration.
+- **`getManifestBitrate()`:** Simplified to use `track.bandwidth` directly instead of calculating `videoBandwidth + audioBandwidth`. The `bandwidth` property already contains the total bitrate (video + audio combined) as declared in the manifest, making the calculation cleaner and more reliable.
+- **`getContentBitratePlayback()`:** Renamed method that now returns `stats.streamBandwidth` instead of `track.videoBandwidth`, providing the current variant's total bitrate from the manifest for more accurate content bitrate tracking.
+
+### Removed
+
+- **`getRenditionBitrate()`:** Removed redundant method that was returning `track.bandwidth`, as this information is now better represented through other bitrate metrics.
+
+### Updated
+
+- **README.md:** Comprehensive update matching the Video.js tracker documentation style, including:
+  - Added npm version and license badges
+  - Enhanced feature highlights with clear descriptions
+  - Restructured with table of contents for better navigation
+  - Added two installation options (NPM/Yarn and direct script include)
+  - Improved usage section with step-by-step instructions
+  - Complete API reference with detailed method documentation
+  - Bitrate metrics section explaining the three distinct metrics
+  - Enhanced support section with multiple support channels
+
+
+### Fixed
+
+- **Tests:** Removed `getRenditionBitrate` test to match the implementation changes.
+
 ## [4.1.0] - 2026-03-09
 
 ### Added
