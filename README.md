@@ -334,6 +334,8 @@ customData: {
 ```
 > **Limit:** The maximum total number of custom attributes per event is **150**. Any attributes beyond this limit will be dropped.
 
+> **Note:** There are special keywords reserved for default attributes (see [DATAMODEL.md](./DATAMODEL.md)). Please do not use these as custom attributes, as they will be dropped. Examples of reserved keywords include `actionName`, `contentId`, `contentTitle`, `playerName`, `playerVersion`, `viewSession`, `viewId`, and others listed in the data model documentation.
+
 ## API Reference
 
 ### Core Methods
