@@ -21,7 +21,7 @@ env:
   AGENT_REPO: newrelic/video-shaka-js
   AGENT_NAME: Shaka
   AGENT_SLUG: shaka
-  AGENT_CATEGORY: browser
+  AGENT_FILE_PREFIX: streaming-browser-agent-shaka
   AGENT_SUBJECT: Streaming Video & Ads for Browser
   # --- Shared docs config (same for all streaming browser agents) ---
   DOCS_FOLDER: src/content/docs/release-notes/streaming-browser-release-notes
@@ -77,7 +77,7 @@ jobs:
           version="${tag#v}"
           today=$(date -u "+%Y-%m-%d")
           fileDate=$(date -u "+%y-%m-%d")
-          releaseFile="${{ env.DOCS_FOLDER }}/streaming-${{ env.AGENT_CATEGORY }}-agent-${{ env.AGENT_SLUG }}-${fileDate}.mdx"
+          releaseFile="${{ env.DOCS_FOLDER }}/${{ env.AGENT_FILE_PREFIX }}-${fileDate}.mdx"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "releaseFile=${releaseFile}" >> "$GITHUB_OUTPUT"
           echo "fileDate=${fileDate}" >> "$GITHUB_OUTPUT"
