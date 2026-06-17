@@ -137,9 +137,6 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.getTrack().height;
   }
 
-  getRenditionBitrate() {
-    return this.getTrack().bandwidth || null;
-  }
 
   getPlayerVersion() {
     try {
@@ -228,7 +225,9 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onAdaptation(e) {
-    this.sendRenditionChanged();
+    const oldBitrate = e.oldTrack?.bandwidth || null;
+    const newBitrate = e.newTrack?.bandwidth || null;
+    this.sendRenditionChanged({ oldBitrate, newBitrate });
   }
 
   onBuffering(e) {
