@@ -167,6 +167,59 @@ const options = {
 const tracker = new ShakaTracker(player, options);
 ```
 
+### Vega Setup (Fire TV)
+
+For deployments targeting Amazon Vega or Fire TV (Kepler runtime), import from the `/vega` subpath and use `VegaTracker`. The configuration shape is different — `applicationToken` + `endpoint` instead of license key + beacon, plus an optional `deviceInfo` block carrying runtime device identity:
+
+```javascript
+import { VegaTracker } from '@newrelic/video-shaka/vega';
+import {
+  getDeviceId, getSystemVersion, getModel, getBrand,
+  getBuildIdSync, getBuildNumber,
+} from '@amazon-devices/react-native-device-info';
+
+const deviceInfo = {
+  uuid:               getDeviceId(),
+  osVersion:          getSystemVersion(),
+  deviceModel:        getModel(),
+  deviceManufacturer: getBrand(),
+  osBuild:            getBuildIdSync(),    // OS image build
+  appBuild:           getBuildNumber(),    // app build number
+  architecture:       'aarch64',
+};
+
+const tracker = new VegaTracker(shakaPlayer, {
+  info: {
+    accountId:        'YOUR_ACCOUNT_ID',
+    applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
+    endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+    deviceInfo,                             // optional but recommended
+  },
+  config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+  // Required on Vega — shaka.Player.attach() is async, so getMediaElement()
+  // returns null at construction time. Pass the underlying media element
+  // directly so DOM listeners attach to the right surface.
+  tag: videoElement,
+  customData: { contentTitle: 'Vega Stream' },
+});
+```
+
+#### `info.deviceInfo` field reference
+
+All sub-fields optional — missing values fall back to the defaults baked into the SDK. Extra fields are ignored.
+
+| Field | Recommended source | Falls back to |
+| --- | --- | --- |
+| `uuid` | `getDeviceId()` — stable model-code identifier | `"00000000-0000-0000-0000-000000000000"` |
+| `osVersion` | `getSystemVersion()` | `"1.0"` |
+| `deviceModel` | `getModel()` | `"VegaDevice"` |
+| `deviceManufacturer` | `getBrand()` | `"Amazon"` |
+| `osBuild` | `getBuildIdSync()` — **OS image build** | `"1"` |
+| `appBuild` | `getBuildNumber()` — **app build number** | `"1"` |
+| `architecture` | `'aarch64'` | `"aarch64"` |
+
+`osBuild` and `appBuild` are semantically distinct: `osBuild` describes the OS image (set by Amazon when shipping the device); `appBuild` is your app's build number from app metadata. Use `getBuildIdSync()` for the former and `getBuildNumber()` for the latter — not interchangeable.
+
 ## Best Practices
 
 ### 1. Setting `contentTitle`
