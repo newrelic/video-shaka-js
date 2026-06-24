@@ -116,16 +116,16 @@ Before initializing the tracker, obtain your New Relic configuration:
 2. Navigate to the video agent onboarding flow
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
 
-### Basic Setup
+### Browser Setup
 
 ```javascript
-import ShakaTracker from '@newrelic/video-shaka';
+import ShakaTracker from '@newrelic/video-shaka/browser';
 
-// Initialize Shaka Player
+// Initialize Shaka Player 
 const player = new shaka.Player();
 await player.attach(videoElement);
 
-// Set player version (required)
+// Required — tracker reads this to report the player version.
 player.version = shaka.Player.version;
 
 // Configure tracker with credentials from one.newrelic.com
@@ -188,20 +188,35 @@ const deviceInfo = {
   architecture:       'aarch64',
 };
 
-const tracker = new VegaTracker(shakaPlayer, {
-  info: {
-    accountId:        'YOUR_ACCOUNT_ID',
-    applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
-    endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
-    deviceInfo,                             // optional but recommended
-  },
-  config: { qoeAggregate: true, qoeIntervalFactor: 1 },
-  // Required on Vega — shaka.Player.attach() is async, so getMediaElement()
-  // returns null at construction time. Pass the underlying media element
-  // directly so DOM listeners attach to the right surface.
-  tag: videoElement,
-  customData: { contentTitle: 'Vega Stream' },
-});
+// Hold the tracker in a ref so it can be disposed on cleanup and accessed
+// for later API calls (setUserId, setHarvestInterval, etc.).
+const tracker = useRef(null);
+
+// Initialize VegaTracker inside onSurfaceViewCreated — by the time this
+// callback fires, shaka.Player.attach() has completed and getMediaElement()
+// returns the VideoPlayer reference.
+const onSurfaceViewCreated = (surfaceHandle) => {
+  videoPlayer.setSurfaceHandle(surfaceHandle);
+  videoPlayer.play();
+
+  tracker.current = new VegaTracker(shakaPlayer, {
+    info: {
+      accountId:        'YOUR_ACCOUNT_ID',
+      applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
+      endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+      deviceInfo,                             // optional but recommended
+    },
+    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    customData: { contentTitle: 'Vega Stream' },
+  });
+  tracker.current.setUserId('YOUR_USER_ID');
+};
+
+// Dispose the tracker when content ends to release event listeners.
+const onEnded = () => {
+  tracker.current?.dispose();
+  tracker.current = null;
+};
 ```
 
 #### `info.deviceInfo` field reference
