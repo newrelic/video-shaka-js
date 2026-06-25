@@ -116,7 +116,7 @@ Before initializing the tracker, obtain your New Relic configuration:
 2. Navigate to the video agent onboarding flow
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
 
-### Browser Setup
+### Browser Player Setup
 
 ```javascript
 import ShakaTracker from '@newrelic/video-shaka/browser';
