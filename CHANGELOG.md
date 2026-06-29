@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [4.1.3] - 2026-06-18
+
+### Changed
+
+- **`onAdaptation()`:** Enhanced to extract and pass old and new bitrate values to `sendRenditionChanged()`. This enables accurate tracking of bitrate changes during rendition switches, providing better visibility into ABR (Adaptive Bitrate) behavior.
+
+
 ## [4.1.1] - 2026-04-08
 
 ### Changed

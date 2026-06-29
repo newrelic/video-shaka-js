@@ -137,6 +137,7 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     return this.getTrack().height;
   }
 
+
   getPlayerVersion() {
     try {
       // Shaka 4.x: version on shaka.Player.version (static)
@@ -224,7 +225,9 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
   }
 
   onAdaptation(e) {
-    this.sendRenditionChanged();
+    const oldBitrate = e.oldTrack?.bandwidth || null;
+    const newBitrate = e.newTrack?.bandwidth || null;
+    this.sendRenditionChanged({ oldBitrate, newBitrate });
   }
 
   onBuffering(e) {
