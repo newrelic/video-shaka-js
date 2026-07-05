@@ -108,15 +108,13 @@ Before using the tracker, ensure you have:
 
 ## Usage
 
-### Getting Your Configuration
+### Browser Player Setup
 
-Before initializing the tracker, obtain your New Relic configuration:
+**Obtain your credentials:**
 
 1. Log in to [one.newrelic.com](https://one.newrelic.com)
 2. Navigate to the video agent onboarding flow
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
-
-### Browser Player Setup
 
 ```javascript
 import ShakaTracker from '@newrelic/video-shaka/browser';
@@ -169,7 +167,13 @@ const tracker = new ShakaTracker(player, options);
 
 ### Vega Setup (Fire TV)
 
-For deployments targeting Amazon Vega or Fire TV (Kepler runtime), import from the `/vega` subpath and use `VegaTracker`. The configuration shape is different — `applicationToken` + `endpoint` instead of license key + beacon, plus an optional `deviceInfo` block carrying runtime device identity:
+For deployments targeting Amazon Vega or Fire TV (Kepler runtime), import from the `/vega` subpath and use `VegaTracker`. The `info` object uses `applicationToken` and `endpoint` specific to the Vega pipeline, plus an optional `deviceInfo` block carrying runtime device identity:
+
+**Obtain your application token:**
+
+1. Log in to [one.newrelic.com](https://one.newrelic.com)
+2. Navigate to the video agent onboarding flow
+3. Copy your `applicationToken` and your `accountId`
 
 ```javascript
 import { VegaTracker } from '@newrelic/video-shaka/vega';
