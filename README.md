@@ -108,24 +108,22 @@ Before using the tracker, ensure you have:
 
 ## Usage
 
-### Getting Your Configuration
+### Browser Player Setup
 
-Before initializing the tracker, obtain your New Relic configuration:
+**Obtain your credentials:**
 
 1. Log in to [one.newrelic.com](https://one.newrelic.com)
 2. Navigate to the video agent onboarding flow
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
 
-### Basic Setup
-
 ```javascript
-import ShakaTracker from '@newrelic/video-shaka';
+import ShakaTracker from '@newrelic/video-shaka/browser';
 
-// Initialize Shaka Player
+// Initialize Shaka Player 
 const player = new shaka.Player();
 await player.attach(videoElement);
 
-// Set player version (required)
+// Required — tracker reads this to report the player version.
 player.version = shaka.Player.version;
 
 // Configure tracker with credentials from one.newrelic.com
@@ -166,6 +164,80 @@ const options = {
 
 const tracker = new ShakaTracker(player, options);
 ```
+
+### Vega Setup (Fire TV)
+
+For deployments targeting Amazon Vega or Fire TV (Kepler runtime), import from the `/vega` subpath and use `VegaTracker`. The `info` object uses `applicationToken` and `endpoint` specific to the Vega pipeline, plus an optional `deviceInfo` block carrying runtime device identity:
+
+**Obtain your application token:**
+
+1. Log in to [one.newrelic.com](https://one.newrelic.com)
+2. Navigate to the video agent onboarding flow
+3. Copy your `applicationToken` and your `accountId`
+
+```javascript
+import { VegaTracker } from '@newrelic/video-shaka/vega';
+import {
+  getDeviceId, getSystemVersion, getModel, getBrand,
+  getBuildIdSync, getBuildNumber,
+} from '@amazon-devices/react-native-device-info';
+
+const deviceInfo = {
+  uuid:               getDeviceId(),
+  osVersion:          getSystemVersion(),
+  deviceModel:        getModel(),
+  deviceManufacturer: getBrand(),
+  osBuild:            getBuildIdSync(),    // OS image build
+  appBuild:           getBuildNumber(),    // app build number
+  architecture:       'aarch64',
+};
+
+// Hold the tracker in a ref so it can be disposed on cleanup and accessed
+// for later API calls (setUserId, setHarvestInterval, etc.).
+const tracker = useRef(null);
+
+// Initialize VegaTracker inside onSurfaceViewCreated — by the time this
+// callback fires, shaka.Player.attach() has completed and getMediaElement()
+// returns the VideoPlayer reference.
+const onSurfaceViewCreated = (surfaceHandle) => {
+  videoPlayer.setSurfaceHandle(surfaceHandle);
+  videoPlayer.play();
+
+  tracker.current = new VegaTracker(shakaPlayer, {
+    info: {
+      accountId:        'YOUR_ACCOUNT_ID',
+      applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
+      endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+      deviceInfo,                             // optional but recommended
+    },
+    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    customData: { contentTitle: 'Vega Stream' },
+  });
+  tracker.current.setUserId('YOUR_USER_ID');
+};
+
+// Dispose the tracker when content ends to release event listeners.
+const onEnded = () => {
+  tracker.current?.dispose();
+  tracker.current = null;
+};
+```
+
+#### `info.deviceInfo` field reference
+
+All sub-fields optional — missing values fall back to the defaults baked into the SDK. Extra fields are ignored.
+
+| Field | Recommended source | Falls back to |
+| --- | --- | --- |
+| `uuid` | `getDeviceId()` — stable model-code identifier | `"00000000-0000-0000-0000-000000000000"` |
+| `osVersion` | `getSystemVersion()` | `"1.0"` |
+| `deviceModel` | `getModel()` | `"VegaDevice"` |
+| `deviceManufacturer` | `getBrand()` | `"Amazon"` |
+| `osBuild` | `getBuildIdSync()` — **OS image build** | `"1"` |
+| `appBuild` | `getBuildNumber()` — **app build number** | `"1"` |
+| `architecture` | `'aarch64'` | `"aarch64"` |
+
+`osBuild` and `appBuild` are semantically distinct: `osBuild` describes the OS image (set by Amazon when shipping the device); `appBuild` is your app's build number from app metadata. Use `getBuildIdSync()` for the former and `getBuildNumber()` for the latter — not interchangeable.
 
 ## Best Practices
 
