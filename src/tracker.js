@@ -1,4 +1,4 @@
-import nrvideo from '@newrelic/video-core';
+import nrvideo, { getRegisteredHarvester } from '@newrelic/video-core';
 import { version } from '../package.json';
 
 export default class ShakaTracker extends nrvideo.VideoTracker {
@@ -6,6 +6,20 @@ export default class ShakaTracker extends nrvideo.VideoTracker {
     super(player, options);
     nrvideo.Core.addTracker(this, options);
   }
+
+  /**
+   * Look up the Browser harvester via core's registry. The registry is
+   * populated as a side effect of `agent.js`'s static import in
+   * `@newrelic/video-core` (default and `/browser` subpath entries).
+   * Returns `undefined` on `/vega` builds — VegaTracker overrides this.
+   *
+   * Used by `videotracker.js` for QoE-drain wiring on `sendStart`/`sendEnd`
+   * and by `tracker.js` (core) for `setHarvestInterval`.
+   */
+  getHarvester() {
+    return getRegisteredHarvester('Browser');
+  }
+
   setPlayer(player, tag) {
     if (!tag && player.getMediaElement) tag = player.getMediaElement();
     nrvideo.VideoTracker.prototype.setPlayer.call(this, player, tag);
