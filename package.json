@@ -39,7 +39,7 @@
   "author": "Jordi Aguilar",
   "license": "Apache-2.0",
   "dependencies": {
-    "@newrelic/video-core": "^5.0.0",
+    "@newrelic/video-core": "^5.0.1",
     "codem-isoboxer": "^0.3.10"
   },
   "devDependencies": {
