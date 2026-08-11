@@ -1,9 +1,8 @@
 ## [5.0.1](https://github.com/newrelic/video-shaka-js/compare/v5.0.0...v5.0.1) (2026-08-06)
 
+### Bug fixes
 
-### Bug Fixes
-
-* Update video-core version ([c115e05](https://github.com/newrelic/video-shaka-js/commit/c115e05ab6f390964d41dbb113dfa3a57a8febea))
+- Updated the bundled `@newrelic/video-core` dependency to v5.0.1, adding Japan (JP) region collector support for Vega/Fire TV tracking.
 
 # CHANGELOG
 
