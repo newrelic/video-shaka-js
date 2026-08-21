@@ -44,9 +44,9 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | contentTitle             | The title of the video.                                                                                                                            |
 | contentIsLive            | True if the video is live.                                                                                                                         |
 | contentBitrate           | The video-only bitrate (in bits per second) of the currently playing variant, derived from `videoBandwidth` of the active track. Excludes audio bandwidth. |
-| contentManifestBitrate   | The total variant bitrate (video + audio combined), in bits per second, as declared in the manifest, derived from `streamBandwidth` in Shaka Player statistics (Indicated Bitrate). |
-| contentMeasuredBitrate   | The estimated network bandwidth in bits per second, as measured by Shaka Player's ABR algorithm, derived from `estimatedBandwidth` in Shaka Player statistics (Observed Bitrate). |
-| contentDownloadBitrate   | The effective download throughput in bits per second, calculated as `(bytesDownloaded × 8) / playTime` from Shaka Player statistics.                |
+| contentManifestBitrate          | The total variant bitrate (video + audio combined), in bits per second, as declared in the manifest, derived from `streamBandwidth` in Shaka Player statistics (Indicated Bitrate). |
+| contentSegmentDownloadBitrate   | Measured bitrate (in bits per second) based on segment download performance, as estimated by Shaka Player's ABR algorithm. |
+| contentNetworkDownloadBitrate   | Network download bitrate (in bits per second) measured during content delivery. |
 | contentRenditionName     | Name of the rendition (e.g., 1080p).                                                                                                               |
 | contentRenditionBitrate  | Total variant bandwidth (video + audio combined) of the active rendition, in bits per second, derived from `bandwidth` of the active track.         |
 | contentRenditionHeight   | Rendition actual Height (before re-scaling).                                                                                                       |
@@ -66,7 +66,18 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | totalAdPlaytime          | Total time ad is played for this video session.                                                                                                    |
 | elapsedTime              | Active Time between two consecutive heartbeats                                                                                                     |
 | bufferType               | When buffer starts, i.e., initial, seek, pause & connection.                                                                                       |
-| timeSinceLastError       | Time in milliseconds since the last content error occurred. Only included after an error has occurred.                                             |
+| timeSinceRequested       | Time (in milliseconds) since the video was requested.                                                                                              |
+| timeSinceStarted         | Time (in milliseconds) since the video started playing.                                                                                            |
+| timeSinceTrackerReady    | Time (in milliseconds) since the Tracker was constructed.                                                                           |
+| timeSinceLastHeartbeat   | Time (in milliseconds) since the last heartbeat event.                                                                                             |
+| timeSinceBufferBegin     | Time (in milliseconds) since the last buffer event began.                                                                                          |
+| timeSincePaused          | Time (in milliseconds) since the video was last paused.                                                                                            |
+| timeSinceLastError       | Time (in milliseconds) since the last content error occurred. Only included after an error has occurred.                                            |
+| numberOfVideos           | Number of videos played in this session.                                                                                                           |
+| numberOfErrors           | Number of errors occurred in this session.                                                                                                         |
+| trackerName              | Name of the tracker/agent.                                                                                                                         |
+| trackerVersion           | Version of the tracker/agent.                                                                                                                      |
+| playtimeSinceLastEvent   | Active content playtime (in milliseconds) since the last event. (JS players only)                                                                  |
 | asn                      | Autonomous System Number: a unique number identifying a group of IP networks that serves the content to the end user.                              |
 | asnLatitude              | The latitude of the geographic center of the postal code where the Autonomous System Network is registered. This is not the end user's latitude.   |
 | asnLongitude             | The longitude of the geographic center of the postal code where the Autonomous System Network is registered. This is not the end user's longitude. |
@@ -179,7 +190,6 @@ An Attribute is a piece of data associated with an event. Attributes provide add
 | contentTitle             | The title of the video.                                                                                                                            |
 | errorMessage             | Message of the error.                                                                                                                              |
 | errorCode                | Error code if it's known.                                                                                                                          |
-| backTrace                | Stack trace of the error.                                                                                                                          |
 | isBackgroundEvent        | If the player is hidden by another window.                                                                                                         |
 | contentSrc               | Content source URL.                                                                                                                                |
 | contentCdn               | Content CDN URL.                                                                                                                                   |
