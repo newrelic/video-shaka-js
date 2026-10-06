@@ -196,14 +196,19 @@ const deviceInfo = {
 // for later API calls (setUserId, setHarvestInterval, etc.).
 const tracker = useRef(null);
 
-// Initialize VegaTracker inside onSurfaceViewCreated — by the time this
-// callback fires, shaka.Player.attach() has completed and getMediaElement()
-// returns the VideoPlayer reference.
+// Initialize VegaTracker inside onSurfaceViewCreated BEFORE calling play(),
+// so the tracker's listeners are registered before the 'play' event fires.
 const onSurfaceViewCreated = (surfaceHandle) => {
   videoPlayer.setSurfaceHandle(surfaceHandle);
-  videoPlayer.play();
 
+  // ⚠️ Always pass `tag: videoPlayer` on Vega.
+  // Shaka 4.7+ attaches to the media element asynchronously, so
+  // player.getMediaElement() returns null when the tracker is created.
+  // Without `tag`, the tracker falls back to listening on the Shaka
+  // instance which never fires DOM events — CONTENT_REQUEST and
+  // CONTENT_START would never be sent to New Relic.
   tracker.current = new VegaTracker(shakaPlayer, {
+    tag: videoPlayer,                        // required — see note below
     info: {
       accountId:        'YOUR_ACCOUNT_ID',
       applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
@@ -214,6 +219,8 @@ const onSurfaceViewCreated = (surfaceHandle) => {
     customData: { contentTitle: 'Vega Stream' },
   });
   tracker.current.setUserId('YOUR_USER_ID');
+
+  videoPlayer.play();
 };
 
 // Dispose the tracker when content ends to release event listeners.
@@ -222,6 +229,30 @@ const onEnded = () => {
   tracker.current = null;
 };
 ```
+
+> **Why `tag` is required on Vega**
+>
+> The tracker resolves the video element by calling `player.getMediaElement()` on the
+> Shaka instance. In Shaka ≤ 4.6 this returned the element synchronously. From
+> **Shaka 4.7 onwards** (including Amazon Vega's patched build), attaching to a media
+> element is an **async operation** — `getMediaElement()` returns `null` until
+> `attach()` completes.
+>
+> When the tracker receives `null`, it falls back to using the Shaka instance as the
+> event target. Shaka never fires DOM events (`play`, `playing`, `pause`, `ended`), so
+> `CONTENT_REQUEST`, `CONTENT_START`, and `CONTENT_HEARTBEAT` are never sent.
+>
+> Passing `tag: videoPlayer` tells the tracker which element to listen on directly,
+> bypassing `getMediaElement()` entirely. This is safe for all Shaka versions.
+>
+> | Shaka version | `getMediaElement()` | `tag` required | `tag` works |
+> | --- | --- | --- | --- |
+> | ≤ 4.6.x | Returns VideoPlayer synchronously | No (optional) | ✅ Yes |
+> | 4.7+ / Vega-patched 4.8.5+ | Returns `null` (async attach) | **Yes** | ✅ Yes |
+>
+> **Recommendation:** always pass `tag: videoPlayer` in Vega apps regardless of Shaka
+> version. It is backward-compatible and future-proof — if you upgrade Shaka later,
+> nothing breaks.
 
 #### `info.deviceInfo` field reference
 
