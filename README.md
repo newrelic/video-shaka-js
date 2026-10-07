@@ -196,17 +196,18 @@ const deviceInfo = {
 // for later API calls (setUserId, setHarvestInterval, etc.).
 const tracker = useRef(null);
 
-// `shakaWrapper` is your ShakaPlayer wrapper instance (e.g. player.current).
-// shakaWrapper.player       = shaka.Player SDK instance
-// shakaWrapper.mediaElement = VideoPlayer (W3C media element — must be public)
+// player.current        = your ShakaPlayer wrapper
+// player.current.player = shaka.Player SDK instance
+// videoPlayer.current   = VideoPlayer ref — the same object passed to ShakaPlayer,
+//                         no changes to ShakaPlayer.ts needed.
 
 // Initialize VegaTracker inside onSurfaceViewCreated BEFORE calling play(),
 // so the tracker's listeners are registered before the 'play' event fires.
 const onSurfaceViewCreated = (surfaceHandle) => {
-  videoPlayer.setSurfaceHandle(surfaceHandle);
+  videoPlayer.current?.setSurfaceHandle(surfaceHandle);
 
-  tracker.current = new VegaTracker(shakaWrapper.player, {
-    tag: shakaWrapper.mediaElement,          // required — see note below
+  tracker.current = new VegaTracker(player.current.player, {
+    tag: videoPlayer.current,                // required — see note below
     info: {
       accountId:        'YOUR_ACCOUNT_ID',
       applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
@@ -218,7 +219,7 @@ const onSurfaceViewCreated = (surfaceHandle) => {
   });
   tracker.current.setUserId('YOUR_USER_ID');
 
-  videoPlayer.play();
+  videoPlayer.current?.play();
 };
 
 // Dispose the tracker when content ends to release event listeners.
@@ -235,7 +236,8 @@ const onEnded = () => {
 > falls back to listening on the Shaka instance which never fires DOM events — so
 > `CONTENT_REQUEST` and `CONTENT_START` are never sent.
 >
-> Always pass `tag: shakaWrapper.mediaElement` — it works for all Shaka versions.
+> Always pass `tag: videoPlayer.current` — it works for all Shaka versions and requires
+> no changes to your `ShakaPlayer` wrapper.
 
 #### `info.deviceInfo` field reference
 
