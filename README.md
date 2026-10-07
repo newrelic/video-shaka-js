@@ -117,7 +117,7 @@ Before using the tracker, ensure you have:
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
 
 ```javascript
-import ShakaTracker from '@newrelic/video-shaka/browser';
+import { ShakaTracker } from '@newrelic/video-shaka/browser';
 
 // Initialize Shaka Player 
 const player = new shaka.Player();
@@ -196,26 +196,24 @@ const deviceInfo = {
 // for later API calls (setUserId, setHarvestInterval, etc.).
 const tracker = useRef(null);
 
+// `shakaWrapper` is your ShakaPlayer wrapper instance (e.g. player.current).
+// shakaWrapper.player       = shaka.Player SDK instance
+// shakaWrapper.mediaElement = VideoPlayer (W3C media element — must be public)
+
 // Initialize VegaTracker inside onSurfaceViewCreated BEFORE calling play(),
 // so the tracker's listeners are registered before the 'play' event fires.
 const onSurfaceViewCreated = (surfaceHandle) => {
   videoPlayer.setSurfaceHandle(surfaceHandle);
 
-  // ⚠️ Always pass `tag: videoPlayer` on Vega.
-  // Shaka 4.7+ attaches to the media element asynchronously, so
-  // player.getMediaElement() returns null when the tracker is created.
-  // Without `tag`, the tracker falls back to listening on the Shaka
-  // instance which never fires DOM events — CONTENT_REQUEST and
-  // CONTENT_START would never be sent to New Relic.
-  tracker.current = new VegaTracker(shakaPlayer, {
-    tag: videoPlayer,                        // required — see note below
+  tracker.current = new VegaTracker(shakaWrapper.player, {
+    tag: shakaWrapper.mediaElement,          // required — see note below
     info: {
       accountId:        'YOUR_ACCOUNT_ID',
       applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
-      endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+      endpoint:         'US',                 // 'US' | 'EU' | 'staging' | 'GOV' | 'JP'
       deviceInfo,                             // optional but recommended
     },
-    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    config: { qoeIntervalFactor: 1 },
     customData: { contentTitle: 'Vega Stream' },
   });
   tracker.current.setUserId('YOUR_USER_ID');
