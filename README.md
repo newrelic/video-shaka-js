@@ -198,8 +198,7 @@ const tracker = useRef(null);
 
 // player.current        = your ShakaPlayer wrapper
 // player.current.player = shaka.Player SDK instance
-// videoPlayer.current   = VideoPlayer ref — the same object passed to ShakaPlayer,
-//                         no changes to ShakaPlayer.ts needed.
+// videoPlayer.current   = VideoPlayer ref — the same object passed to ShakaPlayer
 
 // Initialize VegaTracker inside onSurfaceViewCreated BEFORE calling play(),
 // so the tracker's listeners are registered before the 'play' event fires.
