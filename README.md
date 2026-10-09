@@ -117,7 +117,7 @@ Before using the tracker, ensure you have:
 3. Copy your credentials: `licenseKey`, `beacon`, and `applicationId`
 
 ```javascript
-import ShakaTracker from '@newrelic/video-shaka/browser';
+import { ShakaTracker } from '@newrelic/video-shaka/browser';
 
 // Initialize Shaka Player 
 const player = new shaka.Player();
@@ -196,24 +196,29 @@ const deviceInfo = {
 // for later API calls (setUserId, setHarvestInterval, etc.).
 const tracker = useRef(null);
 
-// Initialize VegaTracker inside onSurfaceViewCreated — by the time this
-// callback fires, shaka.Player.attach() has completed and getMediaElement()
-// returns the VideoPlayer reference.
-const onSurfaceViewCreated = (surfaceHandle) => {
-  videoPlayer.setSurfaceHandle(surfaceHandle);
-  videoPlayer.play();
+// player.current        = your ShakaPlayer wrapper
+// player.current.player = shaka.Player SDK instance
+// videoPlayer.current   = VideoPlayer ref — the same object passed to ShakaPlayer
 
-  tracker.current = new VegaTracker(shakaPlayer, {
+// Initialize VegaTracker inside onSurfaceViewCreated BEFORE calling play(),
+// so the tracker's listeners are registered before the 'play' event fires.
+const onSurfaceViewCreated = (surfaceHandle) => {
+  videoPlayer.current?.setSurfaceHandle(surfaceHandle);
+
+  tracker.current = new VegaTracker(player.current.player, {
+    tag: videoPlayer.current,                // required — see note below
     info: {
       accountId:        'YOUR_ACCOUNT_ID',
       applicationToken: 'YOUR_NRMA_TOKEN',   // begins "AA…-NRMA"
-      endpoint:         'US',                 // 'US' | 'EU' | 'STAGING'
+      endpoint:         'US',                 // 'US' | 'EU' | 'staging' | 'GOV' | 'JP'
       deviceInfo,                             // optional but recommended
     },
-    config: { qoeAggregate: true, qoeIntervalFactor: 1 },
+    config: { qoeIntervalFactor: 1 },
     customData: { contentTitle: 'Vega Stream' },
   });
   tracker.current.setUserId('YOUR_USER_ID');
+
+  videoPlayer.current?.play();
 };
 
 // Dispose the tracker when content ends to release event listeners.
@@ -222,6 +227,16 @@ const onEnded = () => {
   tracker.current = null;
 };
 ```
+
+> **Why `tag` is required on Vega**
+>
+> From **Shaka 4.7+** (including Amazon Vega's patched build), `player.getMediaElement()`
+> returns `null` because media element attachment is async. Without `tag`, the tracker
+> falls back to listening on the Shaka instance which never fires DOM events — so
+> `CONTENT_REQUEST` and `CONTENT_START` are never sent.
+>
+> Always pass `tag: videoPlayer.current` — it works for all Shaka versions and requires
+> no changes to your `ShakaPlayer` wrapper.
 
 #### `info.deviceInfo` field reference
 
